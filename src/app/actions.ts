@@ -1,8 +1,16 @@
 "use server"
 import {PrismaClient} from "@prisma/client"
 import {searchFromMedia} from '@/utils'
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
+import { generateObject, generateText } from 'ai';
+import config, { systemPrompt } from "@/config";
+import {z} from 'zod'
+const google = createGoogleGenerativeAI({
+  apiKey: config.geminiApiKey 
+});
 export interface Post{
     socialMedia:"X"|"YouTube"|"Reddit"
+    creator:string
     url:string
     uid?:string
     content?:string
@@ -13,7 +21,7 @@ export interface Post{
     image?:string[]
     createdAt:Date
     updatedAt?:Date
-
+    sentiment?: 'positive' | 'neutral' | 'negative'
 }
 
 const prisma = new PrismaClient()
@@ -73,9 +81,43 @@ export const search = async (query: string) => {
       media:'Reddit'
     })
   ])
-
+  const timeSortedResponses = responses.flat(1).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
   return {
-    responses
+    responses: timeSortedResponses
   }
 
+}
+
+export const getSentimentAnalysis = async (posts: Post[]) => {
+  const model = google('gemini-2.0-flash-001')
+  const {object} = await generateObject({
+    model,
+    system: systemPrompt,
+    prompt: JSON.stringify(posts.map(post => {
+      return {
+        id: post.uid,
+        content: post.content,
+        title: post.title
+      }
+    })),
+    schema:z.object({
+      posts:z.array(z.object({
+        id:z.string(),
+        titleOrContent:z.string(),
+        sentiment: z.enum(['positive', 'negative', 'neutral'])
+      }))
+    })
+  })
+
+  const sentimentData = object?.posts.reduce((acc, post) => {
+    acc[post.sentiment] += 1;
+    return acc;
+  }, { positive: 0, negative: 0, neutral: 0 } as { positive: number; negative: number; neutral: number });
+  const overall = {
+    positive: (sentimentData?.positive/posts.length)*100 || 0,
+    negative: (sentimentData?.negative/posts.length)*100 || 0,
+    neutral: (sentimentData?.neutral/posts.length)*100 || 0
+  }
+  console.log('object',{object,overall})
+  return {posts:object?.posts,overall}
 }

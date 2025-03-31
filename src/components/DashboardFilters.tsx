@@ -3,8 +3,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface DashboardFiltersProps {
-  platform: string;
-  onPlatformChange: (value: string) => void;
+  socialMedia: string;
+  onSocialMediaChange: (value: string) => void;
   sentiment: string;
   onSentimentChange: (value: string) => void;
   sortBy: string;
@@ -12,8 +12,8 @@ interface DashboardFiltersProps {
 }
 
 const DashboardFilters = ({
-  platform,
-  onPlatformChange,
+  socialMedia,
+  onSocialMediaChange,
   sentiment,
   onSentimentChange,
   sortBy,
@@ -24,15 +24,15 @@ const DashboardFilters = ({
       <div>
         <h3 className="text-sm font-medium mb-2 text-slate-500">Platform</h3>
         <Tabs 
-          value={platform} 
-          onValueChange={onPlatformChange} 
+          value={socialMedia} 
+          onValueChange={onSocialMediaChange} 
           className="w-fit"
         >
           <TabsList>
             <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="youtube">YouTube</TabsTrigger>
-            <TabsTrigger value="reddit">Reddit</TabsTrigger>
-            <TabsTrigger value="twitter">Twitter</TabsTrigger>
+            <TabsTrigger value="YouTube">YouTube</TabsTrigger>
+            <TabsTrigger value="Reddit">Reddit</TabsTrigger>
+            <TabsTrigger value="X">X</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>

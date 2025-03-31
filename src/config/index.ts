@@ -3,7 +3,8 @@ import axios from "axios";
 const config = {
     redisUrl: String(process.env.NEXT_PUBLIC_REDIS_URL),
     XApiKey: String(process.env.NEXT_PUBLIC_X_API_KEY),
-    YouTubeApiKey: String(process.env.NEXT_PUBLIC_YOUTUBE_API_KEY)    
+    YouTubeApiKey: String(process.env.NEXT_PUBLIC_YOUTUBE_API_KEY),
+    geminiApiKey: String(process.env.NEXT_PUBLIC_GEMINI_API_KEY)    
 }
 
 export const youtube = google.youtube({
@@ -29,4 +30,24 @@ redditAxios.interceptors.request.use((c) => {
     return c
 })
 
+
+export const systemPrompt = `
+You are a sentiment analysis expert. Your task is to analyze the sentiment of the given text and return the sentiment as a string.
+The possible values for sentiment are: positive, negative, neutral.
+Please return the sentiment value along with percentage
+Examples:
+user: "I love this product!"
+assistant :{positive: 100%}
+user: "I hate this product!"
+assistant: {negative:100%}
+user: "Samay deserves all the happiness for what he has done \n Samay deserves to be in hell \n Samay is the greatest dark comedian ive heard of"
+assistant: {positive: 66%, negative: 33%}
+user: "Samay is a complete failure now\n Samay is a person with awful thoughts\n Samay should be in jail for what he has done\n Samay is great at what he does \n Samay is average at comedy"
+assistant: {positive: 20%, neutral: 20%, negative: 60%}
+user: "He is an average actor"
+assistant:{neutral: 100%}
+`
+
 export default config
+
+

@@ -7,30 +7,65 @@ import DashboardFilters from '@/components/DashboardFilters';
 import TrendCard, { TrendCardProps } from '@/components/TrendCard';
 import TrendSummary from '@/components/TrendSummary';
 import Footer from '@/components/Footer';
-import { getMockTrendData } from '@/lib/mockData';
-
+// import { getMockTrendData } from '@/lib/mockData';
+import {getSentimentAnalysis, search} from '@/app/actions'
+import Masonry from 'react-masonry-css';
 const Dashboard = () => {
     const searchParams = useSearchParams();
     const queryParam = searchParams.get('query') || '';
-
-    const [platform, setPlatform] = useState('all');
+    const breakpointColumnsObj = {
+        default: 3,
+        1100: 3,
+        700: 2,
+        500: 1
+      };
+    const [socialMedia, setSocialMedia] = useState('all');
     const [sentiment, setSentiment] = useState('all');
+    const [postsLoading, setPostsLoading] = useState(true);
+    const [sentimentLoading, setSentimentLoading] = useState(true);
     const [sortBy, setSortBy] = useState('recent');
     const [trends, setTrends] = useState<TrendCardProps[]>([]);
     const [filteredTrends, setFilteredTrends] = useState<TrendCardProps[]>([]);
     const [query, setQuery] = useState(queryParam);
+    const [sentimentAnalysis, setSentimentAnalysis] = useState<{
+        positive: number;
+        negative: number;
+        neutral: number;
+    } | null>(null);
 
     useEffect(() => {
-        const { trends, query: returnedQuery } = getMockTrendData(queryParam);
-        setTrends(trends);
-        setQuery(returnedQuery);
+        async function fetchTrends(){
+            setPostsLoading(true);
+            setSentimentLoading(true);
+            const { responses } = await search(queryParam);
+            const formattedTrends = responses.map((response) => ({
+                ...response,
+                engagement: {
+                    likes: response.upvotes || 0,
+                    comments: response.downvotes || 0
+                },
+                createdAt: response.createdAt.toISOString()
+            }));
+            setTrends(formattedTrends);
+            setPostsLoading(false);
+            const sentiment = await getSentimentAnalysis(responses);
+            setSentimentAnalysis(sentiment?.overall);
+            const updatedTrends = formattedTrends.map((trend) => ({
+                ...trend,
+                sentiment: sentiment?.posts.find((s) => s.id === trend.uid)?.sentiment || 'neutral'
+            }));
+            setTrends(updatedTrends);
+            setFilteredTrends(updatedTrends);
+            setSentimentLoading(false);
+        }
+        fetchTrends();
     }, [queryParam]);
 
     useEffect(() => {
         let filtered = [...trends];
 
-        if (platform !== 'all') {
-            filtered = filtered.filter(trend => trend.platform === platform);
+        if (socialMedia !== 'all') {
+            filtered = filtered.filter(trend => trend.socialMedia === socialMedia);
         }
 
         if (sentiment !== 'all') {
@@ -44,7 +79,7 @@ const Dashboard = () => {
         }
 
         setFilteredTrends(filtered);
-    }, [trends, platform, sentiment, sortBy]);
+    }, [trends, socialMedia, sentiment, sortBy]);
 
     return (
         <>
@@ -62,22 +97,28 @@ const Dashboard = () => {
                             Showing {filteredTrends.length} trends from across the web
                         </p>
                     </div>
-                    <TrendSummary trends={trends} query={query} />
+                    <TrendSummary trends={trends} query={query} sentimentAnalysis={sentimentAnalysis} sentimentLoading={sentimentLoading}/>
                     <DashboardFilters
-                        platform={platform}
-                        onPlatformChange={setPlatform}
+                        socialMedia={socialMedia}
+                        onSocialMediaChange={setSocialMedia}
                         sentiment={sentiment}
                         onSentimentChange={setSentiment}
                         sortBy={sortBy}
                         onSortByChange={setSortBy}
                     />
                     <div className="mt-6">
-                        {filteredTrends.length > 0 ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {filteredTrends.map((trend, index) => (
-                                    <TrendCard key={index} {...trend} />
-                                ))}
+                        {postsLoading ? (
+                            <div className="flex justify-center">
+                                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-purple"></div>
                             </div>
+                        ) : filteredTrends.length > 0 ? (
+                            <Masonry breakpointCols={breakpointColumnsObj}
+                            className="my-masonry-grid"
+                            columnClassName="my-masonry-grid_column">
+                                {filteredTrends.map((trend, index) => (
+                                    <TrendCard key={index} {...trend} sentimentLoading={sentimentLoading}/>
+                                ))}
+                            </Masonry>
                         ) : (
                             <div className="text-center py-16">
                                 <h3 className="text-xl font-medium mb-2">No trends found</h3>

@@ -6,19 +6,21 @@ import { BarChart3, BarChart4, TrendingUp, ThumbsUp, MessageSquare } from 'lucid
 interface TrendSummaryProps {
   trends: TrendCardProps[];
   query: string;
+  sentimentAnalysis: {
+    positive: number;
+    negative: number;
+    neutral: number;
+  } | null;
+  sentimentLoading: boolean;
 }
 
-const TrendSummary = ({ trends, query }: TrendSummaryProps) => {
-  const sentimentCounts = {
-    positive: trends.filter(t => t.sentiment === 'positive').length,
-    neutral: trends.filter(t => t.sentiment === 'neutral').length,
-    negative: trends.filter(t => t.sentiment === 'negative').length
-  };
+const TrendSummary = ({ trends, query, sentimentAnalysis, sentimentLoading }: TrendSummaryProps) => {
+  const sentimentCounts = sentimentAnalysis;
   
   const platformCounts = {
-    youtube: trends.filter(t => t.platform === 'youtube').length,
-    reddit: trends.filter(t => t.platform === 'reddit').length,
-    twitter: trends.filter(t => t.platform === 'twitter').length
+    youtube: trends.filter(t => t.socialMedia === 'YouTube').length,
+    reddit: trends.filter(t => t.socialMedia === 'Reddit').length,
+    twitter: trends.filter(t => t.socialMedia === 'X').length
   };
   
   const totalLikes = trends.reduce((sum, trend) => sum + trend.engagement.likes, 0);
@@ -35,23 +37,29 @@ const TrendSummary = ({ trends, query }: TrendSummaryProps) => {
           <CardTitle className="text-sm font-medium text-slate-500">Sentiment Analysis</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center">
-            <BarChart3 className="h-8 w-8 text-brand-purple mr-3" />
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                <span className="text-sm">{sentimentCounts.positive} Positive</span>
+          {sentimentLoading ? (
+            <div className="flex justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-purple"></div>
+            </div>
+          ) : (
+            <div className="flex items-center">
+              <BarChart3 className="h-8 w-8 text-brand-purple mr-3" />
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <span className="text-sm">{sentimentCounts?.positive.toFixed(2) || 0}% Positive</span>
               </div>
               <div className="flex items-center gap-2 mb-1">
                 <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                <span className="text-sm">{sentimentCounts.neutral} Neutral</span>
+                <span className="text-sm">{sentimentCounts?.neutral.toFixed(2) || 0}% Neutral</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                <span className="text-sm">{sentimentCounts.negative} Negative</span>
+                <span className="text-sm">{sentimentCounts?.negative.toFixed(2) || 0}% Negative</span>
               </div>
             </div>
-          </div>
+            </div>
+          )}
         </CardContent>
       </Card>
       
