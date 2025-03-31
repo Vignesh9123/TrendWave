@@ -2,7 +2,7 @@ import React from 'react';
 
 const PlatformsSection = () => {
   return (
-    <section className="py-16 bg-slate-50">
+    <section className="py-16 bg-slate-50 dark:bg-slate-800">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">All your favorite platforms in one place</h2>

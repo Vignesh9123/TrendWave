@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className="bg-slate-50 border-t border-slate-200 mt-24">
+    <footer className="bg-slate-50 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 mt-24">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
@@ -14,7 +14,7 @@ const Footer = () => {
                 TrendWave
               </span>
             </div>
-            <p className="text-slate-600 text-sm">
+            <p className="text-foreground text-sm">
               Discover and track trending discussions across multiple platforms in one place.
             </p>
           </div>
@@ -22,25 +22,25 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">Product</h3>
             <ul className="space-y-2">
-              <li><Link href="/features" className="text-slate-600 hover:text-brand-purple text-sm">Features</Link></li>
-              <li><Link href="/dashboard" className="text-slate-600 hover:text-brand-purple text-sm">Dashboard</Link></li>
+              <li><Link href="/features" className="text-foreground-muted hover:text-brand-purple text-sm">Features</Link></li>
+              <li><Link href="/dashboard" className="text-foreground-muted hover:text-brand-purple text-sm">Dashboard</Link></li>
             </ul>
           </div>
           
           <div>
             <h3 className="font-semibold mb-4">Company</h3>
             <ul className="space-y-2">
-              <li><Link href="/about" className="text-slate-600 hover:text-brand-purple text-sm">About</Link></li>
-              <li><Link href="/blog" className="text-slate-600 hover:text-brand-purple text-sm">Blog</Link></li>
-              <li><Link href="/contact" className="text-slate-600 hover:text-brand-purple text-sm">Contact</Link></li>
+              <li><Link href="/about" className="text-foreground-muted hover:text-brand-purple text-sm">About</Link></li>
+              <li><Link href="/blog" className="text-foreground-muted hover:text-brand-purple text-sm">Blog</Link></li>
+              <li><Link href="/contact" className="text-foreground-muted hover:text-brand-purple text-sm">Contact</Link></li>
             </ul>
           </div>
           
           <div>
             <h3 className="font-semibold mb-4">Legal</h3>
             <ul className="space-y-2">
-              <li><Link href="/privacy" className="text-slate-600 hover:text-brand-purple text-sm">Privacy</Link></li>
-              <li><Link href="/terms" className="text-slate-600 hover:text-brand-purple text-sm">Terms</Link></li>
+              <li><Link href="/privacy" className="text-foreground-muted hover:text-brand-purple text-sm">Privacy</Link></li>
+              <li><Link href="/terms" className="text-foreground-muted hover:text-brand-purple text-sm">Terms</Link></li>
             </ul>
           </div>
         </div>

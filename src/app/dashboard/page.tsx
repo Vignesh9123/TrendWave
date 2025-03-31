@@ -32,6 +32,7 @@ const Dashboard = () => {
         negative: number;
         neutral: number;
     } | null>(null);
+    const [takeAways, setTakeAways] = useState<string[]>([]);
 
     useEffect(() => {
         async function fetchTrends(){
@@ -46,7 +47,9 @@ const Dashboard = () => {
                 },
                 createdAt: response.createdAt.toISOString()
             }));
+            console.log('formattedTrends',formattedTrends)
             setTrends(formattedTrends);
+            setFilteredTrends(formattedTrends);
             setPostsLoading(false);
             const sentiment = await getSentimentAnalysis(responses);
             setSentimentAnalysis(sentiment?.overall);
@@ -57,8 +60,9 @@ const Dashboard = () => {
             setTrends(updatedTrends);
             setFilteredTrends(updatedTrends);
             setSentimentLoading(false);
+            setTakeAways(sentiment?.takeAways || []);
         }
-        fetchTrends();
+        // fetchTrends();
     }, [queryParam]);
 
     useEffect(() => {
@@ -84,7 +88,7 @@ const Dashboard = () => {
     return (
         <>
             <Header />
-            <div className="pt-24 pb-16 min-h-screen bg-slate-50">
+            <div className="pt-24 pb-16 min-h-screen bg-background">
                 <div className="container mx-auto px-4">
                     <div className="flex justify-center mb-10">
                         <SearchBar />
@@ -98,6 +102,22 @@ const Dashboard = () => {
                         </p>
                     </div>
                     <TrendSummary trends={trends} query={query} sentimentAnalysis={sentimentAnalysis} sentimentLoading={sentimentLoading}/>
+                    <div className="mt-6">
+                        {sentimentLoading ? (
+                            <div className="flex justify-center">
+                                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-purple"></div>
+                            </div>
+                        ) : takeAways.length > 0 && (
+                            <div className="mb-6">
+                                <h2 className="text-xl lg:text-2xl text-center font-bold mb-1">Major Takeaways</h2>
+                                <ul className="">
+                                    {takeAways.map((takeAway, index) => (
+                                        <li key={index} className='lg:text-lg p-1 bg-slate-200 rounded mb-1'>{takeAway}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                    </div>
                     <DashboardFilters
                         socialMedia={socialMedia}
                         onSocialMediaChange={setSocialMedia}
@@ -106,6 +126,7 @@ const Dashboard = () => {
                         sortBy={sortBy}
                         onSortByChange={setSortBy}
                     />
+                   
                     <div className="mt-6">
                         {postsLoading ? (
                             <div className="flex justify-center">

@@ -1,0 +1,144 @@
+'use client'
+import React, { useState, useEffect } from 'react';
+import { Search as SearchIcon, ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useRouter } from 'next/navigation';
+import { ThemeToggle } from '@/components/Theme-Toggle';
+
+const Search = () => {
+  const [query, setQuery] = useState('');
+  const router = useRouter();
+  
+  // Popular searches
+  const popularSearches = [
+    'Apple Vision Pro',
+    'Artificial Intelligence',
+    'Climate Change',
+    'Cryptocurrency',
+    'Electric Vehicles'
+  ];
+
+  // Recent searches
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+
+  useEffect(() => {
+    // Load recent searches from localStorage
+    const saved = localStorage.getItem('recentSearches');
+    if (saved) {
+      try {
+        setRecentSearches(JSON.parse(saved).slice(0, 5));
+      } catch (e) {
+        console.error('Failed to parse recent searches', e);
+      }
+    }
+    
+    // Focus on the search input when the page loads
+    const searchInput = document.getElementById('mobile-search-input');
+    if (searchInput) {
+      searchInput.focus();
+    }
+  }, []);
+
+  const saveRecentSearch = (term: string) => {
+    const newRecent = [term, ...recentSearches.filter(s => s !== term)].slice(0, 5);
+    setRecentSearches(newRecent);
+    localStorage.setItem('recentSearches', JSON.stringify(newRecent));
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (query.trim()) {
+      saveRecentSearch(query);
+      router.push(`/dashboard?query=${encodeURIComponent(query)}`);
+    }
+  };
+
+  const executeSearch = (term: string) => {
+    saveRecentSearch(term);
+    router.push(`/dashboard?query=${encodeURIComponent(term)}`);
+  };
+
+  const goBack = () => {
+    router.back();
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="p-4 border-b border-border sticky top-0 bg-background z-10">
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="icon" onClick={goBack} className="shrink-0">
+            <ArrowLeft className="h-5 w-5" />
+            <span className="sr-only">Go back</span>
+          </Button>
+          <form onSubmit={handleSearch} className="w-full">
+            <div className="relative w-full">
+              <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input
+                id="mobile-search-input"
+                type="text"
+                placeholder="Search a topic..."
+                className="pl-10 h-11 pr-4 w-full"
+                value={query}
+                autoFocus
+                onChange={(e) => setQuery(e.target.value)}
+              />
+            </div>
+          </form>
+          <ThemeToggle />
+        </div>
+      </div>
+
+      <div className="px-4 py-6">
+        <div className="space-y-6">
+          {recentSearches.length > 0 && (
+            <div>
+              <h3 className="font-medium text-sm text-muted-foreground mb-2">Recent Searches</h3>
+              <ul className="space-y-1">
+                {recentSearches.map((term) => (
+                  <li 
+                    key={term} 
+                    onClick={() => executeSearch(term)}
+                    className="flex items-center py-3 px-2 cursor-pointer hover:bg-accent rounded-md"
+                  >
+                    <SearchIcon className="mr-3 h-4 w-4 text-muted-foreground" />
+                    <span>{term}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div>
+            <h3 className="font-medium text-sm text-muted-foreground mb-2">Popular Searches</h3>
+            <ul className="space-y-1">
+              {popularSearches.map((term) => (
+                <li 
+                  key={term} 
+                  onClick={() => executeSearch(term)}
+                  className="flex items-center py-3 px-2 cursor-pointer hover:bg-accent rounded-md"
+                >
+                  <SearchIcon className="mr-3 h-4 w-4 text-muted-foreground" />
+                  <span>{term}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {query && !popularSearches.includes(query) && !recentSearches.includes(query) && (
+            <div className="py-6 text-center text-sm">
+              No results found for "{query}".
+              <div className="mt-2">
+                <Button onClick={() => executeSearch(query)}>
+                  Search for "{query}"
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Search;

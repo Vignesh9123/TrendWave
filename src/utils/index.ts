@@ -132,6 +132,7 @@ const parseReddit = (data: any) : Post[] => {
     url: `https://www.reddit.com${item.data.permalink}`,
     uid: item.data.id,
     title: item.data.title,
+    content: item.data.selftext,
     upvotes: item.data.ups || 0,
     downvotes: item.data.downs || 0,
     views: item.data.view_count || 0,

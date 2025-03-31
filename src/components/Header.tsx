@@ -1,12 +1,18 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { TrendingUp } from "lucide-react";
+import { TrendingUp, Menu } from "lucide-react";
 import Link from "next/link";
+import { ThemeToggle } from "./Theme-Toggle";
+import { useIsMobile } from "@/hooks/use-mobile";
+import MobileSidebar from "./MobileSidebar";
 
 const Header = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const isMobile = useIsMobile();
+
   return (
-    <header className="bg-white/80 backdrop-blur-md border-b border-slate-100 fixed top-0 left-0 right-0 z-30">
+    <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 fixed top-0 left-0 right-0 z-30">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
@@ -19,22 +25,42 @@ const Header = () => {
           </div>
           
           <nav className="hidden md:flex space-x-8">
-            <Link href="/" className="font-medium text-slate-600 hover:text-brand-purple">
+            <Link href="/" className="font-medium text-slate-600 dark:text-slate-300 hover:text-brand-purple dark:hover:text-brand-purple">
               Home
             </Link>
-            <Link href="/dashboard" className="font-medium text-slate-600 hover:text-brand-purple">
+            <Link href="/dashboard" className="font-medium text-slate-600 dark:text-slate-300 hover:text-brand-purple dark:hover:text-brand-purple">
               Dashboard
             </Link>
+            
           </nav>
           
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" className="hidden md:flex">Log in</Button>
-            <Button className="bg-brand-purple hover:bg-brand-purple/90 text-white">
-              Sign up free
-            </Button>
+          <div className="flex items-center space-x-2 md:space-x-4">
+            <ThemeToggle />
+            <div className="hidden md:flex items-center space-x-2">
+              <Button variant="ghost">Log in</Button>
+              <Button className="bg-brand-purple hover:bg-brand-purple/90 text-white">
+                Sign up free
+              </Button>
+            </div>
+            {isMobile && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="md:hidden"
+                onClick={() => setIsMobileMenuOpen(true)}
+              >
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            )}
           </div>
         </div>
       </div>
+      
+      <MobileSidebar 
+        isOpen={isMobileMenuOpen} 
+        onClose={() => setIsMobileMenuOpen(false)} 
+      />
     </header>
   );
 };

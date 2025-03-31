@@ -26,7 +26,7 @@ const FeaturesSection = () => {
   ];
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-white dark:bg-slate-800">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">Powerful features for trend discovery</h2>
@@ -44,7 +44,7 @@ const FeaturesSection = () => {
               <div className="inline-block p-3 bg-slate-50 rounded-lg mb-4">
                 {feature.icon}
               </div>
-              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+              <h3 className="text-xl text-black font-semibold mb-2">{feature.title}</h3>
               <p className="text-slate-600">{feature.description}</p>
             </div>
           ))}

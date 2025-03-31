@@ -105,7 +105,8 @@ export const getSentimentAnalysis = async (posts: Post[]) => {
         id:z.string(),
         titleOrContent:z.string(),
         sentiment: z.enum(['positive', 'negative', 'neutral'])
-      }))
+      })),
+      takeAways: z.string()
     })
   })
 
@@ -119,5 +120,5 @@ export const getSentimentAnalysis = async (posts: Post[]) => {
     neutral: (sentimentData?.neutral/posts.length)*100 || 0
   }
   console.log('object',{object,overall})
-  return {posts:object?.posts,overall}
+  return {posts:object?.posts,overall, takeAways: object?.takeAways.split('\n')}
 }
