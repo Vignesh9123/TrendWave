@@ -8,12 +8,14 @@ import TrendCard, { TrendCardProps } from '@/components/TrendCard';
 import TrendSummary from '@/components/TrendSummary';
 import Footer from '@/components/Footer';
 // import { getMockTrendData } from '@/lib/mockData';
-import {getSentimentAnalysis, trending} from '@/app/actions'
+import {getSentimentAnalysis, search} from '@/app/actions'
 import Masonry from 'react-masonry-css';
 import { getMockTrendData } from '@/lib/mockData';
 import {motion} from 'framer-motion'
 import { Loader2 } from 'lucide-react';
-const Dashboard = () => {
+const Results = () => {
+    const searchParams = useSearchParams();
+    const queryParam = searchParams.get('query') || '';
     const breakpointColumnsObj = {
         default: 3,
         1100: 3,
@@ -27,6 +29,7 @@ const Dashboard = () => {
     const [sortBy, setSortBy] = useState('recent');
     const [trends, setTrends] = useState<TrendCardProps[]>([]);
     const [filteredTrends, setFilteredTrends] = useState<TrendCardProps[]>([]);
+    const [query, setQuery] = useState(queryParam);
     const [sentimentAnalysis, setSentimentAnalysis] = useState<{
         positive: number;
         negative: number;
@@ -36,10 +39,11 @@ const Dashboard = () => {
     const [loadingStateInd, setLoadingStateInd] = useState<number>(0)
 
     useEffect(() => {
+        setQuery(queryParam)
         async function fetchTrends(){
             setPostsLoading(true);
             setSentimentLoading(true);
-            const { responses } = await trending();
+            const { responses } = await search(queryParam);
             const formattedTrends = responses.map((response, ind) => ({
                 ...response,
                 engagement: {
@@ -71,7 +75,7 @@ const Dashboard = () => {
         // setTakeAways(res.takeAways)
         // setPostsLoading(false);
         // setSentimentLoading(false)
-    }, []);
+    }, [queryParam]);
 
     useEffect(() => {
         let filtered = [...trends];
@@ -125,7 +129,7 @@ const Dashboard = () => {
                     </div>
                     <div className="mb-6">
                         <h1 className="text-2xl font-bold mb-1">
-                            Trending Discussions
+                            Trend results for <span className="text-brand-purple">{query}</span>
                         </h1>
                         <div className="text-muted-foreground">
                             {postsLoading?
@@ -139,7 +143,7 @@ const Dashboard = () => {
                         :`Showing ${filteredTrends.length} trends from across the web`}
                         </div>
                     </div>
-                    <TrendSummary trends={trends} query={"Trending Discussions"} sentimentAnalysis={sentimentAnalysis} sentimentLoading={sentimentLoading} postsLoading={postsLoading}/>
+                    <TrendSummary trends={trends} query={query} sentimentAnalysis={sentimentAnalysis} sentimentLoading={sentimentLoading} postsLoading={postsLoading}/>
                     <div className="mt-6">
                         {sentimentLoading ? (
                             <div className="flex flex-col gap-2 my-3">
@@ -215,4 +219,4 @@ const Dashboard = () => {
     );
 };
 
-export default Dashboard;
+export default Results;

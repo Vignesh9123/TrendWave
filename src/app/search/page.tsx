@@ -61,13 +61,13 @@ const Search = () => {
     e.preventDefault();
     if (query.trim()) {
       saveRecentSearch(query);
-      router.push(`/dashboard?query=${encodeURIComponent(query)}`);
+      router.push(`/results?query=${encodeURIComponent(query)}`);
     }
   };
 
   const executeSearch = (term: string) => {
     saveRecentSearch(term);
-    router.push(`/dashboard?query=${encodeURIComponent(term)}`);
+    router.push(`/results?query=${encodeURIComponent(term)}`);
   };
 
   const goBack = () => {

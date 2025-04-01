@@ -4,7 +4,8 @@ const config = {
     redisUrl: String(process.env.NEXT_PUBLIC_REDIS_URL),
     XApiKey: String(process.env.NEXT_PUBLIC_X_API_KEY),
     YouTubeApiKey: String(process.env.NEXT_PUBLIC_YOUTUBE_API_KEY),
-    geminiApiKey: String(process.env.NEXT_PUBLIC_GEMINI_API_KEY)    
+    geminiApiKey: String(process.env.NEXT_PUBLIC_GEMINI_API_KEY),
+    jwtSecret: String(process.env.NEXT_PUBLIC_JWT_SECRET)    
 }
 
 export const youtube = google.youtube({

@@ -1,4 +1,4 @@
-
+'use client'
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { TrendingUp, Menu } from "lucide-react";
@@ -6,11 +6,13 @@ import Link from "next/link";
 import { ThemeToggle } from "./Theme-Toggle";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileSidebar from "./MobileSidebar";
-
+import { useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isMobile = useIsMobile();
-
+  const router = useRouter();
+  const { data: session } = useSession();
   return (
     <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 fixed top-0 left-0 right-0 z-30">
       <div className="container mx-auto px-4">
@@ -36,12 +38,16 @@ const Header = () => {
           
           <div className="flex items-center space-x-2 md:space-x-4">
             <ThemeToggle />
-            <div className="hidden md:flex items-center space-x-2">
-              <Button variant="ghost">Log in</Button>
-              <Button className="bg-brand-purple hover:bg-brand-purple/90 text-white">
-                Sign up free
-              </Button>
-            </div>
+            {session ? (
+              <Button onClick={() => signOut()} variant="ghost">Log out</Button>
+            ) : (
+              <>
+                <Button onClick={() => router.push('/signin')} variant="ghost">Log in</Button>
+                <Button className="bg-brand-purple hover:bg-brand-purple/90 text-white">
+                  Sign up free
+                </Button>
+              </>
+            )}
             {isMobile && (
               <Button 
                 variant="ghost" 

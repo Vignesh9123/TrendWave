@@ -28,13 +28,13 @@ const HeroSection = () => {
           
           <div className="flex flex-wrap justify-center items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
             <span>Popular searches:</span>
-            <Link href="/dashboard?query=Apple%20Vision%20Pro" className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full hover:border-brand-purple hover:text-brand-purple transition-colors">
+            <Link href="/results?query=Apple%20Vision%20Pro" className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full hover:border-brand-purple hover:text-brand-purple transition-colors">
               Apple Vision Pro
             </Link>
-            <Link href="/dashboard?query=Artificial%20Intelligence" className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full hover:border-brand-purple hover:text-brand-purple transition-colors">
+            <Link href="/results?query=Artificial%20Intelligence" className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full hover:border-brand-purple hover:text-brand-purple transition-colors">
               Artificial Intelligence
             </Link>
-            <Link href="/dashboard?query=Climate%20Change" className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full hover:border-brand-purple hover:text-brand-purple transition-colors">
+            <Link href="/results?query=Climate%20Change" className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full hover:border-brand-purple hover:text-brand-purple transition-colors">
               Climate Change
             </Link>
           </div>

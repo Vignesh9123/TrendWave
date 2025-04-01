@@ -34,6 +34,38 @@ export const searchFromMedia = async ({query,media}: {query: string, media: 'X' 
  }
 }
 
+export const trendingInMedia = async ({media}: {media: 'X' | 'YouTube' | 'Reddit'}) => {
+  try {
+      switch (media) {
+        case 'X':
+            const xData = await trendsFromX()
+           //  console.log('X: xData',xData)
+           
+           const parsedData = parseX(xData.tweets)
+           console.log('X: parsedData',parsedData)
+            return parsedData
+          break;
+        case 'YouTube':
+            const youtubeData = await trendsFromYoutube()
+           //  console.log('YouTube: youtubeData',youtubeData)
+           
+           const parsedYoutubeData = parseYoutube(youtubeData)
+           console.log('parsedYoutubeData',parsedYoutubeData)
+            return parsedYoutubeData
+          break;
+        case 'Reddit':
+          const redditData = await trendsFromReddit()         
+         const parsedRedditData = parseReddit(redditData)
+         console.log('Reddit: parsedRedditData',parsedRedditData)
+         return parsedRedditData
+          break;
+      }
+  } catch (error) {
+     console.log(error)
+     return []
+  }
+}
+
 const searchFromX = async (query: string) => {
   try {
     const response = await xAxios.get(`/tweet/advanced_search?queryType=Top&query=${query}`)
@@ -83,6 +115,44 @@ const searchFromReddit = async (query: string)=>{
   }
 }
 
+const trendsFromX = async () => {
+  try {
+    const response = await xAxios.get(`/tweet/advanced_search?queryType=Top&query=india%20since%3A${new Date( new Date().setDate(new Date().getDate() - 1)).toISOString().split('T')[0]}}`)
+    // console.log('X:response.data',response.data)
+    return response.data
+  } catch (error) {
+    console.log(error)
+    return []
+  }
+}
+
+const trendsFromYoutube = async () => {
+  try {
+    const response = await youtube.videos.list({
+      part:["snippet", "contentDetails", "statistics"],
+      chart: 'mostPopular',
+      maxResults: 5,
+      regionCode: 'IN'
+    })
+    console.log('Detailed response YT Trends', response.data.items)
+    return response.data.items
+  } catch (error) {
+    console.log(error)
+    return []
+  }
+}
+
+const trendsFromReddit = async () => {
+  try {
+    const response = await redditAxios.get(`/top?limit=5`)
+    // console.log('Reddit:response.data',response.data)
+    return response.data.data.children
+  } catch (error) {
+    console.log(error)
+    return []
+  }
+}
+
 const parseX = (data: any) : Post[] => {
   const posts = data.map((item: any) => ({
     socialMedia: "X",
@@ -94,7 +164,8 @@ const parseX = (data: any) : Post[] => {
     views: item.viewCount,
     image: item?.extendedEntities?.media?.map((media: any) => media.media_url_https) || [],
     createdAt: new Date(item.createdAt),
-    creator: item?.author?.userName
+    creator: item?.author?.userName,
+    comments: item.replyCount
   }))
   return posts
 }
@@ -111,7 +182,8 @@ const parseYoutube = (data: any) : Post[] => {
     views: Number(item?.statistics?.viewCount),
     image: [item?.snippet?.thumbnails?.maxres?.url || item?.snippet?.thumbnails?.default?.url],
     createdAt: new Date(item.snippet?.publishedAt),
-    creator: item?.snippet?.channelTitle
+    creator: item?.snippet?.channelTitle,
+    comments: Number(item?.statistics?.commentCount)
   }))
   return posts
 }
@@ -138,6 +210,7 @@ const parseReddit = (data: any) : Post[] => {
     views: item.data.view_count || 0,
     creator: item.data.subreddit_name_prefixed,
     createdAt: new Date(new Date(0).setUTCSeconds(item.data.created_utc)),
+    comments: item.data.num_comments
   }))
   return posts
 }

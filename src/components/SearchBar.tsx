@@ -80,14 +80,14 @@ const SearchBar = () => {
     e.preventDefault();
     if (query.trim()) {
       saveRecentSearch(query);
-      router.push(`/dashboard?query=${encodeURIComponent(query)}`);
+      router.push(`/results?query=${encodeURIComponent(query)}`);
       setOpen(false);
     }
   };
 
   const executeSearch = (term: string) => {
     saveRecentSearch(term);
-    router.push(`/dashboard?query=${encodeURIComponent(term)}`);
+    router.push(`/results?query=${encodeURIComponent(term)}`);
     setOpen(false);
   };
 
@@ -170,7 +170,7 @@ const SearchBar = () => {
               {recentSearches.map((term) => (
                 <CommandItem 
                   key={term} 
-                  onClick={() => executeSearch(term)}
+                  onSelect={() => executeSearch(term)}
                 >
                   <Search className="mr-2 h-4 w-4" />
                   {term}

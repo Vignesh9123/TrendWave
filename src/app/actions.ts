@@ -1,6 +1,6 @@
 "use server"
 import {PrismaClient} from "@prisma/client"
-import {searchFromMedia} from '@/utils'
+import {searchFromMedia, trendingInMedia} from '@/utils'
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { generateObject, generateText } from 'ai';
 import config, { systemPrompt } from "@/config";
@@ -21,7 +21,8 @@ export interface Post{
     image?:string[]
     createdAt:Date
     updatedAt?:Date
-    sentiment?: 'positive' | 'neutral' | 'negative'
+    sentiment?: 'positive' | 'neutral' | 'negative',
+    comments?:number
 }
 
 const prisma = new PrismaClient()
@@ -41,31 +42,6 @@ export const search = async (query: string) => {
     }
   })
   // TODO:add redis logic
-//   const xData = await searchFromMedia({
-//     query,
-//     media:'X'
-//   })
-//   console.log('X: xData',xData)
-
-//   // parse X data
-
-//   const youtubeData = await searchFromMedia({
-//     query,
-//     media:'YouTube'
-//   })
-
-//   console.log('YT:', youtubeData)
-
-//   // parse YT Data
-
-//   const redditData =await searchFromMedia({
-//     query,
-//     media:"Reddit"
-//   })
-
-//   console.log('Reddit: ', redditData)
-
-  // parse redditData
 
   const responses = await Promise.all([
     searchFromMedia({
@@ -82,6 +58,29 @@ export const search = async (query: string) => {
     })
   ])
   const timeSortedResponses = responses.flat(1).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+  return {
+    responses: timeSortedResponses
+  }
+
+}
+
+export const trending = async() =>{
+  // TODO: Implement redis logic
+
+  const responses = await Promise.all([
+    trendingInMedia({
+      media: 'X'
+    }),
+    trendingInMedia({
+      media: 'YouTube'
+    }),
+    trendingInMedia({
+      media: 'Reddit'
+    })
+    
+  ])
+  const timeSortedResponses = responses.flat(1).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+
   return {
     responses: timeSortedResponses
   }

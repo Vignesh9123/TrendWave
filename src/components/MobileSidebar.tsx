@@ -5,7 +5,8 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter } from '
 import { Button } from '@/components/ui/button';
 import { TrendingUp, X } from 'lucide-react';
 import { ThemeToggle } from './Theme-Toggle';
-
+import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 interface MobileSidebarProps {
   isOpen: boolean;
   onClose: () => void;
@@ -17,7 +18,8 @@ const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
     { label: 'Dashboard', path: '/dashboard' },
     { label: 'Search', path: '/search' },
   ];
-
+  const {data:session} = useSession()
+  const router = useRouter()
   return (
     <Drawer open={isOpen} onOpenChange={onClose}>
       <DrawerContent className="h-[85vh] rounded-t-xl">
@@ -56,11 +58,14 @@ const MobileSidebar = ({ isOpen, onClose }: MobileSidebarProps) => {
               <ThemeToggle />
               <span className="ml-2 text-sm text-muted-foreground">Toggle theme</span>
             </div>
-            
+            {session?
             <div className="flex gap-2">
-              <Button variant="outline" onClick={onClose}>Login</Button>
+              <Button variant="outline" onClick={()=>signOut()}>Logout</Button>
+            </div>:
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={()=>router.push('/signin')}>Login</Button>
               <Button>Sign up</Button>
-            </div>
+            </div>}
           </div>
         </DrawerFooter>
       </DrawerContent>

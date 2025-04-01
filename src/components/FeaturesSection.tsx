@@ -30,7 +30,7 @@ const FeaturesSection = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">Powerful features for trend discovery</h2>
-          <p className="text-slate-600 max-w-2xl mx-auto">
+          <p className="text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
             Our platform aggregates trend data from multiple sources to give you the most comprehensive view of what's happening online.
           </p>
         </div>
@@ -39,13 +39,13 @@ const FeaturesSection = () => {
           {features.map((feature, index) => (
             <div 
               key={index}
-              className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-300"
+              className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow duration-300"
             >
-              <div className="inline-block p-3 bg-slate-50 rounded-lg mb-4">
+              <div className="inline-block p-3 bg-slate-50 dark:bg-slate-700 rounded-lg mb-4">
                 {feature.icon}
               </div>
-              <h3 className="text-xl text-black font-semibold mb-2">{feature.title}</h3>
-              <p className="text-slate-600">{feature.description}</p>
+              <h3 className="text-xl text-black dark:text-white font-semibold mb-2">{feature.title}</h3>
+              <p className="text-slate-600 dark:text-slate-300">{feature.description}</p>
             </div>
           ))}
         </div>
