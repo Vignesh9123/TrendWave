@@ -43,9 +43,7 @@ const Header = () => {
             ) : (
               <>
                 <Button onClick={() => router.push('/signin')} variant="ghost">Log in</Button>
-                <Button className="bg-brand-purple hover:bg-brand-purple/90 text-white">
-                  Sign up free
-                </Button>
+                
               </>
             )}
             {isMobile && (

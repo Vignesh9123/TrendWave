@@ -13,6 +13,7 @@ import {
   CommandList 
 } from '@/components/ui/command';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { getPopularSearches } from '@/app/actions';
 
 const SearchBar = () => {
   const [query, setQuery] = useState('');
@@ -21,13 +22,7 @@ const SearchBar = () => {
   const isMobile = useIsMobile();
 
   // Popular searches
-  const popularSearches = [
-    'Apple Vision Pro',
-    'Artificial Intelligence',
-    'Climate Change',
-    'Cryptocurrency',
-    'Electric Vehicles'
-  ];
+  const [popularSearches, setPopularSearches] = useState<string[]>([]);
 
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
@@ -40,6 +35,17 @@ const SearchBar = () => {
         console.error('Failed to parse recent searches', e);
       }
     }
+
+    const fetchPopularSearches = async () => {
+      try {
+        const popularSearches = await getPopularSearches();
+        setPopularSearches(popularSearches);
+      } catch (error) {
+        console.error('Failed to fetch popular searches', error);
+      }
+    };
+
+    fetchPopularSearches();
     
     const down = (e: KeyboardEvent) => {
       console.log('Key pressed')
@@ -178,18 +184,21 @@ const SearchBar = () => {
               ))}
             </CommandGroup>
           )}
+          {popularSearches.length > 0 && (
           <CommandGroup heading="Popular Searches">
-            {popularSearches.map((term) => (
-              <CommandItem 
-                key={term} 
-                onClick={() => executeSearch(term)}
+          {popularSearches.map((term) => (
+            <CommandItem 
+              key={term} 
+              onSelect={() => executeSearch(term)}
 
-              >
-                <Search className="mr-2 h-4 w-4" />
-                {term}
-              </CommandItem>
-            ))}
+            >
+              <Search className="mr-2 h-4 w-4" />
+              {term}
+            </CommandItem>
+          ))}  
           </CommandGroup>
+          )}
+          
         </CommandList>
       </CommandDialog>
     </>

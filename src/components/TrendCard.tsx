@@ -110,7 +110,7 @@ const TrendCard = ({
               <Image src={image[0]} alt="Trend Image" className="w-full h-auto" width={300} height={300} />
             </div>
           )}
-          <p className="text-muted-foreground mb-4 text-sm line-clamp-3">{summary}</p>
+          <p className="text-muted-foreground mb-4 text-sm line-clamp-3">{socialMedia == 'X' ? '' : content}</p>
           
           <div className="flex justify-between items-center text-xs text-slate-500">
             <div className="flex space-x-3">

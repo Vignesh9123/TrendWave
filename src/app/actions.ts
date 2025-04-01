@@ -1,10 +1,12 @@
 "use server"
-import {PrismaClient} from "@prisma/client"
 import {searchFromMedia, trendingInMedia} from '@/utils'
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
-import { generateObject, generateText } from 'ai';
+import { generateObject } from 'ai';
 import config, { systemPrompt } from "@/config";
+import Valkey from 'ioredis';
 import {z} from 'zod'
+import { prisma } from "@/prisma";
+import { auth } from "@/auth";
 const google = createGoogleGenerativeAI({
   apiKey: config.geminiApiKey 
 });
@@ -25,11 +27,12 @@ export interface Post{
     comments?:number
 }
 
-const prisma = new PrismaClient()
+const redis = new Valkey(config.redisUrl)
 export const search = async (query: string) => {
-  await prisma.searchQuery.upsert({
+  const session = await auth()
+  const searchQuery = await prisma.searchQuery.upsert({
     where:{
-        query:query
+        query:query.toLowerCase().trim()
     },
     update:{
         count:{
@@ -37,11 +40,38 @@ export const search = async (query: string) => {
         }
     },
     create:{
-        query:query,
+        query:query.toLowerCase().trim(),
         count:1
     }
   })
-  // TODO:add redis logic
+  if(session?.user?.id){
+    await prisma.userSearchHistory.upsert({
+      where:{
+        userId_searchQueryId:{
+          userId:session.user.id,
+          searchQueryId:searchQuery.id
+        }
+      },
+      update:{
+        count:{
+          increment:1
+        }
+      },
+      create:{
+        userId:session.user.id,
+        searchQueryId:searchQuery.id,
+        count:1
+      }
+    })
+  }
+  const cachedResponse = await redis.get(`search:${query.toLowerCase().trim()}`)
+  if(cachedResponse){
+    const timeSortedResponses = JSON.parse(cachedResponse)
+    return {
+      responses: timeSortedResponses
+    }
+
+  }
 
   const responses = await Promise.all([
     searchFromMedia({
@@ -58,6 +88,7 @@ export const search = async (query: string) => {
     })
   ])
   const timeSortedResponses = responses.flat(1).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+  await redis.setex(`search:${query.toLowerCase().trim()}`,3600,JSON.stringify(timeSortedResponses))
   return {
     responses: timeSortedResponses
   }
@@ -65,8 +96,13 @@ export const search = async (query: string) => {
 }
 
 export const trending = async() =>{
-  // TODO: Implement redis logic
-
+  const cachedResponse = await redis.get('trending')
+  if(cachedResponse){
+    const timeSortedResponses = JSON.parse(cachedResponse)
+    return {
+      responses: timeSortedResponses
+    }
+  }
   const responses = await Promise.all([
     trendingInMedia({
       media: 'X'
@@ -80,14 +116,18 @@ export const trending = async() =>{
     
   ])
   const timeSortedResponses = responses.flat(1).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-
+  await redis.setex('trending',3600,JSON.stringify(timeSortedResponses))
   return {
     responses: timeSortedResponses
   }
 
 }
 
-export const getSentimentAnalysis = async (posts: Post[]) => {
+export const getSentimentAnalysis = async (posts: Post[], query: string) => {
+  const cachedResponse = await redis.get(`sentiment:${query.toLowerCase().trim() || 'trending'}`)
+  if(cachedResponse){
+    return JSON.parse(cachedResponse)
+  }
   const model = google('gemini-2.0-flash-001')
   const {object} = await generateObject({
     model,
@@ -119,5 +159,24 @@ export const getSentimentAnalysis = async (posts: Post[]) => {
     neutral: (sentimentData?.neutral/posts.length)*100 || 0
   }
   console.log('object',{object,overall})
+  await redis.setex(`sentiment:${query.toLowerCase().trim()}`,3595,JSON.stringify({posts:object?.posts,overall, takeAways: object?.takeAways.split('\n')}))
   return {posts:object?.posts,overall, takeAways: object?.takeAways.split('\n')}
+}
+
+export const getPopularSearches = async () => {
+  const cachedResponse = await redis.get('popularSearches')
+  if(cachedResponse){
+    return JSON.parse(cachedResponse)
+  }
+  const popularSearches = await prisma.searchQuery.findMany({
+    orderBy: {
+      count: 'desc'
+    },
+    take: 10
+  })
+  await redis.setex('popularSearches',3600,JSON.stringify(popularSearches.map(searchQuery => searchQuery.query)))
+  if( popularSearches && popularSearches.length > 0 ){
+    return popularSearches.map(searchQuery => searchQuery.query)
+  }
+  return []
 }

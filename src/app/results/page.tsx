@@ -8,7 +8,7 @@ import TrendCard, { TrendCardProps } from '@/components/TrendCard';
 import TrendSummary from '@/components/TrendSummary';
 import Footer from '@/components/Footer';
 // import { getMockTrendData } from '@/lib/mockData';
-import {getSentimentAnalysis, search} from '@/app/actions'
+import {getSentimentAnalysis, Post, search} from '@/app/actions'
 import Masonry from 'react-masonry-css';
 import { getMockTrendData } from '@/lib/mockData';
 import {motion} from 'framer-motion'
@@ -44,7 +44,7 @@ const Results = () => {
             setPostsLoading(true);
             setSentimentLoading(true);
             const { responses } = await search(queryParam);
-            const formattedTrends = responses.map((response, ind) => ({
+            const formattedTrends = responses.map((response: Post, ind: number) => ({
                 ...response,
                 engagement: {
                     likes: response.upvotes || 0,
@@ -55,18 +55,17 @@ const Results = () => {
             setTrends(formattedTrends);
             setFilteredTrends(formattedTrends);
             setPostsLoading(false);
-            if(sentimentLoading){
-            const sentiment = await getSentimentAnalysis(responses);
+            const sentiment = await getSentimentAnalysis(responses, queryParam);
             setSentimentAnalysis(sentiment?.overall);
-            const updatedTrends = formattedTrends.map((trend) => ({
+            const updatedTrends = formattedTrends.map((trend : any) => ({
                 ...trend,
-                sentiment: sentiment?.posts.find((s) => s.id === trend.uid)?.sentiment || 'neutral'
+                sentiment: sentiment?.posts.find((s : any) => s.id === trend.uid)?.sentiment || 'neutral'
             }));
             setTrends(updatedTrends);
             setFilteredTrends(updatedTrends);
             setSentimentLoading(false);
             setTakeAways(sentiment?.takeAways || []);
-        }
+        
         }
         fetchTrends();
         // const res = getMockTrendData(queryParam);

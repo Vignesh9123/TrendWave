@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
 import { ThemeToggle } from '@/components/Theme-Toggle';
+import { getPopularSearches } from '../actions';
 
 const Search = () => {
   const [query, setQuery] = useState('');
@@ -12,13 +13,7 @@ const Search = () => {
   
   
   // Popular searches
-  const popularSearches = [
-    'Apple Vision Pro',
-    'Artificial Intelligence',
-    'Climate Change',
-    'Cryptocurrency',
-    'Electric Vehicles'
-  ];
+  const [popularSearches, setPopularSearches] = useState<string[]>([]);
 
   // Recent searches
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
@@ -34,6 +29,17 @@ const Search = () => {
         console.error('Failed to parse recent searches', e);
       }
     }
+    const fetchPopularSearches = async () => {
+      try {
+        const popularSearches = await getPopularSearches();
+        setPopularSearches(popularSearches);
+        setPopularFilteredSearches(popularSearches)
+      } catch (error) {
+        console.error('Failed to fetch popular searches', error);
+      }
+    };
+
+    fetchPopularSearches();
     
     // Focus on the search input when the page loads
     const searchInput = document.getElementById('mobile-search-input');
@@ -132,7 +138,7 @@ const Search = () => {
           <div>
             <h3 className="font-medium text-sm text-muted-foreground mb-2">Popular Searches</h3>
             <ul className="space-y-1">
-              {popularFilteredSearches.map((term) => (
+              { popularFilteredSearches.length > 0 && popularFilteredSearches.map((term) => (
                 <li 
                   key={term} 
                   onClick={() => executeSearch(term)}
