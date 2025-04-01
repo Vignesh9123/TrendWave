@@ -10,6 +10,7 @@ const Search = () => {
   const [query, setQuery] = useState('');
   const router = useRouter();
   
+  
   // Popular searches
   const popularSearches = [
     'Apple Vision Pro',
@@ -21,6 +22,7 @@ const Search = () => {
 
   // Recent searches
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [popularFilteredSearches, setPopularFilteredSearches] = useState<string[]>([])
 
   useEffect(() => {
     // Load recent searches from localStorage
@@ -39,6 +41,15 @@ const Search = () => {
       searchInput.focus();
     }
   }, []);
+
+  useEffect(()=>{
+    if(query.length > 0){
+      setPopularFilteredSearches(()=>{
+        return popularSearches.filter((q)=>q.toLowerCase().includes(query.toLowerCase()))
+      })
+    }
+    else setPopularFilteredSearches(popularSearches)
+  }, [query])
 
   const saveRecentSearch = (term: string) => {
     const newRecent = [term, ...recentSearches.filter(s => s !== term)].slice(0, 5);
@@ -91,6 +102,15 @@ const Search = () => {
 
       <div className="px-4 py-6">
         <div className="space-y-6">
+          {
+            query && (
+              <div onClick={()=>{
+                executeSearch(query)
+              }} className='hover:bg-muted flex items-center p-2 cursor-pointer'>
+                <SearchIcon className="mr-3 h-4 w-4 text-muted-foreground"/>{query}
+              </div>
+            )
+          }
           {recentSearches.length > 0 && (
             <div>
               <h3 className="font-medium text-sm text-muted-foreground mb-2">Recent Searches</h3>
@@ -112,7 +132,7 @@ const Search = () => {
           <div>
             <h3 className="font-medium text-sm text-muted-foreground mb-2">Popular Searches</h3>
             <ul className="space-y-1">
-              {popularSearches.map((term) => (
+              {popularFilteredSearches.map((term) => (
                 <li 
                   key={term} 
                   onClick={() => executeSearch(term)}
@@ -124,17 +144,6 @@ const Search = () => {
               ))}
             </ul>
           </div>
-
-          {query && !popularSearches.includes(query) && !recentSearches.includes(query) && (
-            <div className="py-6 text-center text-sm">
-              No results found for "{query}".
-              <div className="mt-2">
-                <Button onClick={() => executeSearch(query)}>
-                  Search for "{query}"
-                </Button>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

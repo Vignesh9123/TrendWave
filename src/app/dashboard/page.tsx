@@ -39,6 +39,7 @@ const Dashboard = () => {
     const [loadingStateInd, setLoadingStateInd] = useState<number>(0)
 
     useEffect(() => {
+        setQuery(queryParam)
         async function fetchTrends(){
             setPostsLoading(true);
             setSentimentLoading(true);

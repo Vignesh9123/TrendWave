@@ -29,11 +29,9 @@ const SearchBar = () => {
     'Electric Vehicles'
   ];
 
-  // Recent searches (would be from local storage in a real app)
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
   useEffect(() => {
-    // Load recent searches from localStorage
     const saved = localStorage.getItem('recentSearches');
     if (saved) {
       try {
@@ -43,8 +41,8 @@ const SearchBar = () => {
       }
     }
     
-    // Set up keyboard shortcut to open search
     const down = (e: KeyboardEvent) => {
+      console.log('Key pressed')
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         if (isMobile) {
@@ -54,9 +52,22 @@ const SearchBar = () => {
         }
       }
     };
+
+    const enter = (e:KeyboardEvent)=>{
+      if(e.key === 'Enter'){
+        e.preventDefault()
+        if(query.length > 0){
+          executeSearch(query)
+        }
+      }
+    }
     
     document.addEventListener('keydown', down);
-    return () => document.removeEventListener('keydown', down);
+    document.addEventListener('keydown', enter)
+    return () =>{
+      document.removeEventListener('keydown', down)
+      document.removeEventListener('keydown', enter)
+    }
   }, [router, isMobile]);
 
   const saveRecentSearch = (term: string) => {
@@ -135,16 +146,31 @@ const SearchBar = () => {
             placeholder="Search a topic (e.g., Apple Vision Pro)" 
             value={query}
             onValueChange={setQuery}
+            onKeyDown={(e)=>{
+              if(e.key === 'Enter' && query.length > 0)
+                executeSearch(query)
+            }}
           />
         </form>
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandEmpty className=' cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800'>
+            <div onClick={() => executeSearch(query)} className="text-muted-foreground text-left p-2">
+              Search for {query}
+            </div>
+          </CommandEmpty>
           {recentSearches.length > 0 && (
-            <CommandGroup heading="Recent Searches">
+            <CommandGroup>
+              <div className='flex w-full justify-between px-2'>
+                <p className='text-sm text-muted-foreground'>Recent Searches</p>
+                <div onClick={()=>{
+                  localStorage.removeItem('recentSearches')
+                  setRecentSearches([])
+                }} className='text-muted-foreground text-sm cursor-pointer'> Clear</div>
+              </div>
               {recentSearches.map((term) => (
                 <CommandItem 
                   key={term} 
-                  onSelect={() => executeSearch(term)}
+                  onClick={() => executeSearch(term)}
                 >
                   <Search className="mr-2 h-4 w-4" />
                   {term}
@@ -156,7 +182,8 @@ const SearchBar = () => {
             {popularSearches.map((term) => (
               <CommandItem 
                 key={term} 
-                onSelect={() => executeSearch(term)}
+                onClick={() => executeSearch(term)}
+
               >
                 <Search className="mr-2 h-4 w-4" />
                 {term}
