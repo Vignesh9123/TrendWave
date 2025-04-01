@@ -24,7 +24,7 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 export default function ThemeProvider({
   children,
   defaultTheme = "system",
-  storageKey = "ui-theme",
+  storageKey = "theme",
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(
@@ -35,6 +35,12 @@ export default function ThemeProvider({
     const root = window.document.documentElement;
 
     root.classList.remove("light", "dark");
+
+    const savedTheme = localStorage.getItem(storageKey);
+
+    if (savedTheme) {
+      setTheme(savedTheme as Theme);
+    }
 
     if (theme === "system") {
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")

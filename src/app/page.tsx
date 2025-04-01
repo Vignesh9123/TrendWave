@@ -5,6 +5,7 @@ import HeroSection from '@/components/HeroSection';
 import FeaturesSection from '@/components/FeaturesSection';
 import PlatformsSection from '@/components/PlatformsSection';
 import Footer from '@/components/Footer';
+import Link from 'next/link';
 
 const Index = () => {
   return (
@@ -23,12 +24,12 @@ const Index = () => {
                 Get insights into trending topics across multiple platforms and stay ahead of the curve.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <a href="/dashboard" className="px-6 py-3 bg-white text-brand-purple font-medium rounded-lg hover:bg-opacity-90 transition-colors">
+                <Link href="/dashboard" className="px-6 py-3 bg-white text-brand-purple font-medium rounded-lg hover:bg-opacity-90 transition-colors">
                   Try it now
-                </a>
-                <a href="/pricing" className="px-6 py-3 bg-transparent border border-white text-white font-medium rounded-lg hover:bg-white hover:bg-opacity-10 transition-colors">
+                </Link>
+                <Link href="/pricing" className="px-6 py-3 bg-transparent border border-white text-white font-medium rounded-lg hover:bg-white hover:bg-opacity-10 transition-colors">
                   View pricing
-                </a>
+                </Link>
               </div>
             </div>
           </div>

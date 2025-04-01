@@ -1,6 +1,7 @@
 
 import React from 'react';
 import SearchBar from './SearchBar';
+import Link from 'next/link';
 
 const HeroSection = () => {
   return (
@@ -27,15 +28,15 @@ const HeroSection = () => {
           
           <div className="flex flex-wrap justify-center items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
             <span>Popular searches:</span>
-            <a href="/dashboard?query=Apple%20Vision%20Pro" className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full hover:border-brand-purple hover:text-brand-purple transition-colors">
+            <Link href="/dashboard?query=Apple%20Vision%20Pro" className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full hover:border-brand-purple hover:text-brand-purple transition-colors">
               Apple Vision Pro
-            </a>
-            <a href="/dashboard?query=Artificial%20Intelligence" className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full hover:border-brand-purple hover:text-brand-purple transition-colors">
+            </Link>
+            <Link href="/dashboard?query=Artificial%20Intelligence" className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full hover:border-brand-purple hover:text-brand-purple transition-colors">
               Artificial Intelligence
-            </a>
-            <a href="/dashboard?query=Climate%20Change" className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full hover:border-brand-purple hover:text-brand-purple transition-colors">
+            </Link>
+            <Link href="/dashboard?query=Climate%20Change" className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full hover:border-brand-purple hover:text-brand-purple transition-colors">
               Climate Change
-            </a>
+            </Link>
           </div>
         </div>
       </div>

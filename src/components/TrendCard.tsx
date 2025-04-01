@@ -1,8 +1,10 @@
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ThumbsUp, MessageSquare, Clock, ArrowRight, Loader2 } from 'lucide-react';
+import { ThumbsUp, MessageSquare, Clock, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
 export interface TrendCardProps {
   socialMedia: 'X' | 'YouTube' | 'Reddit';
   title?: string;
@@ -14,10 +16,11 @@ export interface TrendCardProps {
     comments: number;
   };
   image?: string[];
-  createdAt: string;
+  createdAt: Date;
   url: string;
   creator: string;
   sentimentLoading?: boolean;
+  index?: number;
 }
 
 const TrendCard = ({
@@ -31,7 +34,8 @@ const TrendCard = ({
   image,
   url,
   creator,
-  sentimentLoading
+  sentimentLoading,
+  index
 }: TrendCardProps) => {
   const platformColors = {
     YouTube: 'bg-red-500',
@@ -74,11 +78,16 @@ const TrendCard = ({
   };
 
   return (
-    <Card className="overflow-hidden hover:shadow-md transition-shadow h-max">
-      <CardContent className="p-0">
-        <div className="p-5">
-          <div className="flex justify-between items-start mb-3">
-            <div className={`${platformColors[socialMedia]} rounded-full p-1 flex items-center justify-center`}>
+    <motion.div
+      initial={{ opacity: 0, y: 10, scale: 0.9, filter: 'blur(10px)' }}
+      animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+      transition={{ duration: 0.3, delay: index ? index * 0.1 : 0 }}
+    >
+      <Card className="overflow-hidden hover:shadow-md transition-shadow h-max">
+        <CardContent className="p-0">
+          <div className="p-5">
+            <div className="flex justify-between items-start mb-3">
+              <div className={`${platformColors[socialMedia]} rounded-full p-1 flex items-center justify-center`}>
               <div className="flex items-center justify-center gap-2">
               <div className="w-6 h-6 flex items-center justify-center">{platformIcons[socialMedia]}</div>
               <div className="line-clamp-1">{creator}</div>
@@ -101,7 +110,7 @@ const TrendCard = ({
               <Image src={image[0]} alt="Trend Image" className="w-full h-auto" width={300} height={300} />
             </div>
           )}
-          <p className="text-slate-600 mb-4 text-sm line-clamp-3">{summary}</p>
+          <p className="text-muted-foreground mb-4 text-sm line-clamp-3">{summary}</p>
           
           <div className="flex justify-between items-center text-xs text-slate-500">
             <div className="flex space-x-3">
@@ -121,16 +130,17 @@ const TrendCard = ({
           </div>
         </div>
         
-        <a
+        <Link
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="p-3 border-t border-slate-100 text-brand-purple hover:bg-slate-50 text-sm font-medium flex items-center justify-center"
+          className="p-3 border-t border-slate-100 text-brand-purple hover:bg-slate-50 dark:hover:bg-muted text-sm font-medium flex items-center justify-center"
         >
           View Original <ArrowRight className="ml-1 h-4 w-4" />
-        </a>
+        </Link>
       </CardContent>
     </Card>
+    </motion.div>
   );
 };
 

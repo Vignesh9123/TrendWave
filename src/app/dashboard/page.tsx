@@ -10,6 +10,9 @@ import Footer from '@/components/Footer';
 // import { getMockTrendData } from '@/lib/mockData';
 import {getSentimentAnalysis, search} from '@/app/actions'
 import Masonry from 'react-masonry-css';
+import { getMockTrendData } from '@/lib/mockData';
+import {motion} from 'framer-motion'
+import { Loader2 } from 'lucide-react';
 const Dashboard = () => {
     const searchParams = useSearchParams();
     const queryParam = searchParams.get('query') || '';
@@ -33,19 +36,19 @@ const Dashboard = () => {
         neutral: number;
     } | null>(null);
     const [takeAways, setTakeAways] = useState<string[]>([]);
+    const [loadingStateInd, setLoadingStateInd] = useState<number>(0)
 
     useEffect(() => {
         async function fetchTrends(){
             setPostsLoading(true);
             setSentimentLoading(true);
             const { responses } = await search(queryParam);
-            const formattedTrends = responses.map((response) => ({
+            const formattedTrends = responses.map((response, ind) => ({
                 ...response,
                 engagement: {
                     likes: response.upvotes || 0,
                     comments: response.downvotes || 0
                 },
-                createdAt: response.createdAt.toISOString()
             }));
             console.log('formattedTrends',formattedTrends)
             setTrends(formattedTrends);
@@ -62,7 +65,13 @@ const Dashboard = () => {
             setSentimentLoading(false);
             setTakeAways(sentiment?.takeAways || []);
         }
-        // fetchTrends();
+        fetchTrends();
+        // const res = getMockTrendData(queryParam);
+        // setTrends(res.trends);
+        // setFilteredTrends(res.trends);
+        // setTakeAways(res.takeAways)
+        // setPostsLoading(false);
+        // setSentimentLoading(false)
     }, [queryParam]);
 
     useEffect(() => {
@@ -85,6 +94,28 @@ const Dashboard = () => {
         setFilteredTrends(filtered);
     }, [trends, socialMedia, sentiment, sortBy]);
 
+    const loadingStates = [
+        "Collecting Different Sources",
+        "Searching query in different sources",
+        "Organizing the data"
+    ]
+    useEffect(() => {
+        let interval: NodeJS.Timeout | null = null;
+        
+        if (postsLoading) {
+          interval = setInterval(() => {
+            setLoadingStateInd((prev) => {
+              return prev === loadingStates.length - 1 ? 0 : prev + 1;
+            });
+          }, 3000);
+        }
+        
+        return () => {
+          if (interval !== null) {
+            clearInterval(interval);
+          }
+        };
+      }, [postsLoading]);
     return (
         <>
             <Header />
@@ -97,22 +128,46 @@ const Dashboard = () => {
                         <h1 className="text-2xl font-bold mb-1">
                             Trend results for <span className="text-brand-purple">{query}</span>
                         </h1>
-                        <p className="text-slate-600">
-                            Showing {filteredTrends.length} trends from across the web
-                        </p>
+                        <div className="text-muted-foreground">
+                            {postsLoading?
+                                 (
+                                    <div className='flex gap-2 items-center'>
+                                      {loadingStates[loadingStateInd]}
+                                      <span ><Loader2 className='animate-spin ' size={15}/></span>
+                                    </div>
+                                  )
+                            
+                        :`Showing ${filteredTrends.length} trends from across the web`}
+                        </div>
                     </div>
-                    <TrendSummary trends={trends} query={query} sentimentAnalysis={sentimentAnalysis} sentimentLoading={sentimentLoading}/>
+                    <TrendSummary trends={trends} query={query} sentimentAnalysis={sentimentAnalysis} sentimentLoading={sentimentLoading} postsLoading={postsLoading}/>
                     <div className="mt-6">
                         {sentimentLoading ? (
-                            <div className="flex justify-center">
-                                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-purple"></div>
+                            <div className="flex flex-col gap-2 my-3">
+                                {[1,2,3,4].map((k)=>{
+                                    return(
+                                        <div key={k} className='bg-muted h-8 w-full animate-pulse'></div>
+                                    )
+                                })}
                             </div>
                         ) : takeAways.length > 0 && (
                             <div className="mb-6">
                                 <h2 className="text-xl lg:text-2xl text-center font-bold mb-1">Major Takeaways</h2>
                                 <ul className="">
                                     {takeAways.map((takeAway, index) => (
-                                        <li key={index} className='lg:text-lg p-1 bg-slate-200 rounded mb-1'>{takeAway}</li>
+                                        <motion.li 
+                                            initial={{opacity:0, filter: 'blur(3px)'}}
+                                            animate={{opacity: 1,  filter: 'blur(0px)'}}
+                                            transition={{duration: 0.5, delay: index*0.3}}
+                                        key={index} className='lg:text-lg p-1 bg-muted rounded mb-1'>{takeAway.split(' ').map((word, ind)=>{
+                                            return(
+                                                <motion.span key={ind} initial={{opacity: 0,filter:'blur(5px)'}} animate={{opacity:1,filter:'blur(0px)'}}
+                                                transition={{duration: 0.2, delay: ind*0.1}}
+                                                >
+                                                    {word + " "}
+                                                </motion.span>
+                                            )
+                                        })}</motion.li>
                                     ))}
                                 </ul>
                             </div>
@@ -129,15 +184,22 @@ const Dashboard = () => {
                    
                     <div className="mt-6">
                         {postsLoading ? (
-                            <div className="flex justify-center">
-                                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-purple"></div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                                {[1,2,3,4,5,6].map((k)=>{
+                                    return(
+                                        <div key={k} className='h-64
+                                         bg-muted animate-pulse'>
+
+                                        </div>
+                                    )                                
+                                })}
                             </div>
                         ) : filteredTrends.length > 0 ? (
                             <Masonry breakpointCols={breakpointColumnsObj}
                             className="my-masonry-grid"
                             columnClassName="my-masonry-grid_column">
                                 {filteredTrends.map((trend, index) => (
-                                    <TrendCard key={index} {...trend} sentimentLoading={sentimentLoading}/>
+                                    <TrendCard key={index} {...trend} sentimentLoading={sentimentLoading} index={index}/>
                                 ))}
                             </Masonry>
                         ) : (

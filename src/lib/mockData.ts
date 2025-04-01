@@ -3,6 +3,7 @@ import { TrendCardProps } from "../components/TrendCard";
 export interface TrendData {
   trends: TrendCardProps[];
   query: string;
+  takeAways: string[]
 }
 
 export function getMockTrendData(query: string): TrendData {
@@ -44,7 +45,7 @@ export function getMockTrendData(query: string): TrendData {
             likes: 245000,
             comments: 12400
           },
-          createdAt: formatTime(oneHourAgo),
+          createdAt: oneHourAgo,
           url: "https://www.youtube.com/watch?v=example1",
           creator: "John Doe"
         },
@@ -57,7 +58,7 @@ export function getMockTrendData(query: string): TrendData {
             likes: 3240,
             comments: 982
           },
-          createdAt: formatTime(twoHoursAgo),
+          createdAt: twoHoursAgo,
           url: "https://www.reddit.com/r/apple/comments/example2",
           creator: "John Doe"
         },
@@ -70,7 +71,7 @@ export function getMockTrendData(query: string): TrendData {
             likes: 5670,
             comments: 1230
           },
-          createdAt: formatTime(fourHoursAgo),
+          createdAt: fourHoursAgo,
           url: "https://twitter.com/example3",
           creator: "John Doe"
         },
@@ -83,7 +84,7 @@ export function getMockTrendData(query: string): TrendData {
             likes: 178000,
             comments: 8900
           },
-          createdAt: formatTime(dayAgo),
+          createdAt: dayAgo,
           url: "https://www.youtube.com/watch?v=example4",
           creator: "John Doe"
         },
@@ -96,7 +97,7 @@ export function getMockTrendData(query: string): TrendData {
             likes: 1850,
             comments: 423
           },
-          createdAt: formatTime(twoHoursAgo),
+          createdAt: twoHoursAgo,
           url: "https://www.reddit.com/r/augmentedreality/comments/example5",
           creator: "John Doe"
         },
@@ -109,10 +110,18 @@ export function getMockTrendData(query: string): TrendData {
             likes: 4230,
             comments: 890
           },
-          createdAt: formatTime(twoHoursAgo),
+          createdAt: twoHoursAgo,
           url: "https://twitter.com/example6",
           creator: "John Doe"
         },
+      ],
+      takeAways:[
+        'Apple Vision Pro is a mixed bag with both positive and negative feedback',
+      'Some users find it life-changing, while others are disappointed' ,
+      'Comfort and accessories are a common concern, with users experimenting with various mods' ,
+      'Productivity and entertainment are key use cases, with immersive experiences being a highlight' ,
+      'Socialization and connecting with others is a transformative aspect for some users' ,
+      'Gaming on the Vision Pro is promising but still has room to grow'
       ]
     },
     "Artificial Intelligence": {
@@ -127,7 +136,7 @@ export function getMockTrendData(query: string): TrendData {
             likes: 326000,
             comments: 15700
           },
-          createdAt: formatTime(twoHoursAgo),
+          createdAt: twoHoursAgo,
           url: "https://www.youtube.com/watch?v=example7",
           creator: "John Doe"
         },
@@ -140,7 +149,7 @@ export function getMockTrendData(query: string): TrendData {
             likes: 8960,
             comments: 1240
           },
-          createdAt: formatTime(fourHoursAgo),
+          createdAt: fourHoursAgo,
           url: "https://www.reddit.com/r/MachineLearning/comments/example8",
           creator: "John Doe"
         },
@@ -153,7 +162,7 @@ export function getMockTrendData(query: string): TrendData {
             likes: 3450,
             comments: 890
           },
-          createdAt: formatTime(oneHourAgo),
+          createdAt: oneHourAgo,
           url: "https://twitter.com/example9",
           creator: "John Doe"
         },
@@ -166,10 +175,18 @@ export function getMockTrendData(query: string): TrendData {
             likes: 203000,
             comments: 34500
           },
-          createdAt: formatTime(dayAgo),
+          createdAt: dayAgo,
           url: "https://www.youtube.com/watch?v=example10",
           creator: "John Doe"
         },
+      ],
+      takeAways:[
+        'Apple Vision Pro is a mixed bag with both positive and negative feedback',
+      'Some users find it life-changing, while others are disappointed' ,
+      'Comfort and accessories are a common concern, with users experimenting with various mods' ,
+      'Productivity and entertainment are key use cases, with immersive experiences being a highlight' ,
+      'Socialization and connecting with others is a transformative aspect for some users' ,
+      'Gaming on the Vision Pro is promising but still has room to grow'
       ]
     },
     "Climate Change": {
@@ -184,7 +201,7 @@ export function getMockTrendData(query: string): TrendData {
             likes: 187000,
             comments: 23400
           },
-          createdAt: formatTime(fourHoursAgo),
+          createdAt: fourHoursAgo,
           url: "https://www.youtube.com/watch?v=example11",
           creator: "John Doe"
         },
@@ -197,7 +214,7 @@ export function getMockTrendData(query: string): TrendData {
             likes: 6740,
             comments: 1350
           },
-          createdAt: formatTime(twoHoursAgo),
+          createdAt: twoHoursAgo,
           url: "https://www.reddit.com/r/science/comments/example12",
           creator: "John Doe"
         },
@@ -210,10 +227,18 @@ export function getMockTrendData(query: string): TrendData {
             likes: 12400,
             comments: 3200
           },
-          createdAt: formatTime(oneHourAgo),
+          createdAt: oneHourAgo,
           url: "https://twitter.com/example13",
           creator: "John Doe"
         },
+      ],
+      takeAways:[
+        'Apple Vision Pro is a mixed bag with both positive and negative feedback',
+      'Some users find it life-changing, while others are disappointed' ,
+      'Comfort and accessories are a common concern, with users experimenting with various mods' ,
+      'Productivity and entertainment are key use cases, with immersive experiences being a highlight' ,
+      'Socialization and connecting with others is a transformative aspect for some users' ,
+      'Gaming on the Vision Pro is promising but still has room to grow'
       ]
     },
     "default": {
@@ -228,7 +253,7 @@ export function getMockTrendData(query: string): TrendData {
             likes: 125000,
             comments: 7800
           },
-          createdAt: formatTime(twoHoursAgo),
+          createdAt: twoHoursAgo,
           url: "https://www.youtube.com/watch?v=example14",
           creator: "John Doe"
         },
@@ -241,7 +266,7 @@ export function getMockTrendData(query: string): TrendData {
             likes: 5240,
             comments: 1320
           },
-          createdAt: formatTime(fourHoursAgo),
+          createdAt: fourHoursAgo,
           url: "https://www.reddit.com/r/science/comments/example15",
           creator: "John Doe"
         },
@@ -254,10 +279,18 @@ export function getMockTrendData(query: string): TrendData {
             likes: 3820,
             comments: 940
           },
-          createdAt: formatTime(oneHourAgo),
+          createdAt: oneHourAgo,
           url: "https://twitter.com/example16",
           creator: "John Doe"
         },
+      ],
+      takeAways:[
+        'Apple Vision Pro is a mixed bag with both positive and negative feedback',
+      'Some users find it life-changing, while others are disappointed' ,
+      'Comfort and accessories are a common concern, with users experimenting with various mods' ,
+      'Productivity and entertainment are key use cases, with immersive experiences being a highlight' ,
+      'Socialization and connecting with others is a transformative aspect for some users' ,
+      'Gaming on the Vision Pro is promising but still has room to grow'
       ]
     }
   };

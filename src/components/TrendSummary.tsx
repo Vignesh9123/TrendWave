@@ -12,9 +12,10 @@ interface TrendSummaryProps {
     neutral: number;
   } | null;
   sentimentLoading: boolean;
+  postsLoading: boolean;
 }
 
-const TrendSummary = ({ trends, query, sentimentAnalysis, sentimentLoading }: TrendSummaryProps) => {
+const TrendSummary = ({ trends, query, sentimentAnalysis, sentimentLoading,postsLoading }: TrendSummaryProps) => {
   const sentimentCounts = sentimentAnalysis;
   
   const platformCounts = {
@@ -38,9 +39,23 @@ const TrendSummary = ({ trends, query, sentimentAnalysis, sentimentLoading }: Tr
         </CardHeader>
         <CardContent>
           {sentimentLoading ? (
-            <div className="flex justify-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-purple"></div>
-            </div>
+             <div className="flex items-center">
+             <BarChart3 className="h-8 w-8 text-brand-purple mr-3" />
+             <div>
+               <div className="flex items-center gap-2 mb-1">
+                 <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                 <span className="text-sm"><span className='bg-muted animate-pulse text-transparent'>10.00</span>% Positive</span>
+             </div>
+             <div className="flex items-center gap-2 mb-1">
+               <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+               <span className="text-sm"><span className='bg-muted animate-pulse text-transparent'>10.00</span>% Neutral</span>
+             </div>
+             <div className="flex items-center gap-2">
+               <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+               <span className="text-sm"><span className='bg-muted animate-pulse text-transparent'>10.00</span>% Negative</span>
+             </div>
+           </div>
+           </div>
           ) : (
             <div className="flex items-center">
               <BarChart3 className="h-8 w-8 text-brand-purple mr-3" />
@@ -68,7 +83,26 @@ const TrendSummary = ({ trends, query, sentimentAnalysis, sentimentLoading }: Tr
           <CardTitle className="text-sm font-medium text-slate-500">Platform Distribution</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center">
+          {postsLoading ? (
+            <div className="flex items-center">
+            <BarChart4 className="h-8 w-8 text-brand-purple mr-3" />
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                <span className="text-sm"><span className='bg-muted animate-pulse text-transparent'>10</span> YouTube</span>
+              </div>
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-3 h-3 bg-orange-600 rounded-full"></div>
+                <span className="text-sm"><span className='bg-muted animate-pulse text-transparent'>10</span> Reddit</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
+                <span className="text-sm"><span className='bg-muted animate-pulse text-transparent'>10</span> Twitter</span>
+              </div>
+            </div>
+          </div>
+          ) 
+          : (<div className="flex items-center">
             <BarChart4 className="h-8 w-8 text-brand-purple mr-3" />
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -84,7 +118,8 @@ const TrendSummary = ({ trends, query, sentimentAnalysis, sentimentLoading }: Tr
                 <span className="text-sm">{platformCounts.twitter} Twitter</span>
               </div>
             </div>
-          </div>
+          </div>)
+}
         </CardContent>
       </Card>
       
@@ -93,7 +128,20 @@ const TrendSummary = ({ trends, query, sentimentAnalysis, sentimentLoading }: Tr
           <CardTitle className="text-sm font-medium text-slate-500">Total Engagement</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center">
+          {postsLoading?(<div className="flex items-center">
+            <TrendingUp className="h-8 w-8 text-brand-purple mr-3" />
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <ThumbsUp className="h-4 w-4 text-slate-500" />
+                <span className="text-sm"><span className='bg-muted animate-pulse text-transparent'>10,000</span> Likes</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <MessageSquare className="h-4 w-4 text-slate-500" />
+                <span className="text-sm"><span className='bg-muted animate-pulse text-transparent'>10,000</span> Comments</span>
+              </div>
+            </div>
+          </div>)
+          : (<div className="flex items-center">
             <TrendingUp className="h-8 w-8 text-brand-purple mr-3" />
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -105,7 +153,8 @@ const TrendSummary = ({ trends, query, sentimentAnalysis, sentimentLoading }: Tr
                 <span className="text-sm">{formatNumber(totalComments)} Comments</span>
               </div>
             </div>
-          </div>
+          </div>)
+}
         </CardContent>
       </Card>
     </div>

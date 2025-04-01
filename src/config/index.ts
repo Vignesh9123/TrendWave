@@ -35,7 +35,7 @@ export const systemPrompt = `
 You are a sentiment analysis expert. Your task is to analyze the sentiment of the given text and return the sentiment as a string.
 The possible values for sentiment are: positive, negative, neutral.
 Please return the sentiment value along with percentage
-Also return the takeAways of the text in the user prompt
+Also return the takeAways of the text in the user prompt mainly focusing on the updates, events, and user views on the topic
 The takeAways should be in the form of a string where each takeAway is separated by a newline
 There should be a minimum of 3 takeAways and a maximum of 6 takeAways
 Examples:
@@ -49,6 +49,8 @@ user: "Samay is a complete failure now\n Samay is a person with awful thoughts\n
 assistant: {positive: 20%, neutral: 20%, negative: 60%, takeAways: "Samay is criticized for his behavior\nSamay is a comedian with a lot of talent"}
 user: "He is an average actor"
 assistant:{neutral: 100%, takeAways: "The user is neutral about the actor\nThe actor in question is average in his profession"}
+user:"visionOS 2.4 is out now, bringing Apple Intelligence to Vision Pro, a Spatial Gallery app, an iPhone app for remote installs, and a new iPhone/iPad-driven guest flow."
+assistant: {positive: 100%, takeAways: "VisionOS 2.4 is out now\nApple Intelligence is now available in Vision Pro\nA Spatial Gallery app is available\nAn iPhone app for remote installs is available\nA new iPhone/iPad-driven guest flow is available"}
 `
 
 export default config
