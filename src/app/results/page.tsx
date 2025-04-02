@@ -1,19 +1,17 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
 import DashboardFilters from '@/components/DashboardFilters';
-import TrendCard, { TrendCardProps } from '@/components/TrendCard';
+import  { TrendCardProps } from '@/components/TrendCard';
 import TrendSummary from '@/components/TrendSummary';
-import Footer from '@/components/Footer';
 // import { getMockTrendData } from '@/lib/mockData';
 import {getSentimentAnalysis, Post, search} from '@/app/actions'
-import Masonry from 'react-masonry-css';
-import { getMockTrendData } from '@/lib/mockData';
 import {motion} from 'framer-motion'
 import { Loader2 } from 'lucide-react';
-import {breakpointColumnsObj} from '@/config/clientConfig';
+import {loadingStates} from '@/config/clientConfig';
+import TrendsGrid from '@/components/TrendsGrid';
+import TrendsLoading from '@/components/TrendsLoading';
 const Results = () => {
     const searchParams = useSearchParams();
     const queryParam = searchParams.get('query') || '';
@@ -46,7 +44,6 @@ const Results = () => {
                     comments: response.comments || 0
                 },
             }));
-            console.log('formattedTrends',formattedTrends)
             setTrends(formattedTrends);
             setFilteredTrends(formattedTrends);
             setPostsLoading(false);
@@ -91,11 +88,7 @@ const Results = () => {
         setFilteredTrends(filtered);
     }, [trends, socialMedia, sentiment, sortBy]);
 
-    const loadingStates = [
-        "Collecting Different Sources",
-        "Searching query in different sources",
-        "Organizing the data"
-    ]
+    
     useEffect(() => {
         let interval: NodeJS.Timeout | null = null;
         
@@ -104,7 +97,7 @@ const Results = () => {
             setLoadingStateInd((prev) => {
               return prev === loadingStates.length - 1 ? 0 : prev + 1;
             });
-          }, 3000);
+          }, 3200);
         }
         
         return () => {
@@ -115,7 +108,6 @@ const Results = () => {
       }, [postsLoading]);
     return (
         <>
-            <Header />
             <div className="pt-24 pb-16 min-h-screen bg-background">
                 <div className="container mx-auto px-4">
                     <div className="flex justify-center mb-10">
@@ -181,24 +173,9 @@ const Results = () => {
                    
                     <div className="mt-6">
                         {postsLoading ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                                {[1,2,3,4,5,6].map((k)=>{
-                                    return(
-                                        <div key={k} className='h-64
-                                         bg-muted animate-pulse'>
-
-                                        </div>
-                                    )                                
-                                })}
-                            </div>
+                           <TrendsLoading/>
                         ) : filteredTrends.length > 0 ? (
-                            <Masonry breakpointCols={breakpointColumnsObj}
-                            className="my-masonry-grid"
-                            columnClassName="my-masonry-grid_column">
-                                {filteredTrends.map((trend, index) => (
-                                    <TrendCard key={index} {...trend} sentimentLoading={sentimentLoading} index={index}/>
-                                ))}
-                            </Masonry>
+                            <TrendsGrid trends={filteredTrends} sentimentLoading={sentimentLoading} />
                         ) : (
                             <div className="text-center py-16">
                                 <h3 className="text-xl font-medium mb-2">No trends found</h3>
@@ -208,7 +185,6 @@ const Results = () => {
                     </div>
                 </div>
             </div>
-            <Footer />
         </>
     );
 };

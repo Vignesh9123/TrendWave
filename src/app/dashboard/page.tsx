@@ -1,22 +1,18 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
 import DashboardFilters from '@/components/DashboardFilters';
-import TrendCard, { TrendCardProps } from '@/components/TrendCard';
+import  { TrendCardProps } from '@/components/TrendCard';
 import TrendSummary from '@/components/TrendSummary';
-import Footer from '@/components/Footer';
 // import { getMockTrendData } from '@/lib/mockData';
-import {getSearchHistory, getSentimentAnalysis, Post, trending} from '@/app/actions'
-import Masonry from 'react-masonry-css';
-import { getMockTrendData } from '@/lib/mockData';
+import { getSentimentAnalysis, Post, trending} from '@/app/actions'
 import {motion} from 'framer-motion'
-import { Loader2, User2 } from 'lucide-react';
-import Image from 'next/image';
+import { Loader2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import {breakpointColumnsObj} from '@/config/clientConfig';
+import {loadingStates} from '@/config/clientConfig';
+import TrendsGrid from '@/components/TrendsGrid';
+import { UserCard } from '@/components/UserCard';
+import TrendsLoading from '@/components/TrendsLoading';
 const Dashboard = () => {
     
     const [socialMedia, setSocialMedia] = useState('all');
@@ -96,11 +92,6 @@ const Dashboard = () => {
         setFilteredTrends(filtered);
     }, [trends, socialMedia, sentiment, sortBy]);
 
-    const loadingStates = [
-        "Collecting Different Sources",
-        "Searching query in different sources",
-        "Organizing the data"
-    ]
     useEffect(() => {
         let interval: NodeJS.Timeout | null = null;
         
@@ -120,7 +111,6 @@ const Dashboard = () => {
       }, [postsLoading]);
     return (
         <>
-            <Header />
             <div className="pt-24 pb-16 min-h-screen bg-background">
                 <div className="container mx-auto px-4 ">
                     <div className="flex justify-center mb-10">
@@ -187,24 +177,9 @@ const Dashboard = () => {
                    
                     <div className="mt-6">
                         {postsLoading ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                                {[1,2,3,4,5,6].map((k)=>{
-                                    return(
-                                        <div key={k} className='h-64
-                                         bg-muted animate-pulse'>
-
-                                        </div>
-                                    )                                
-                                })}
-                            </div>
+                           <TrendsLoading/>
                         ) : filteredTrends.length > 0 ? (
-                            <Masonry breakpointCols={breakpointColumnsObj}
-                            className="my-masonry-grid"
-                            columnClassName="my-masonry-grid_column">
-                                {filteredTrends.map((trend, index) => (
-                                    <TrendCard key={index} {...trend} sentimentLoading={sentimentLoading} index={index}/>
-                                ))}
-                            </Masonry>
+                            <TrendsGrid trends={filteredTrends} sentimentLoading={sentimentLoading} />
                         ) : (
                             <div className="text-center py-16">
                                 <h3 className="text-xl font-medium mb-2">No trends found</h3>
@@ -214,67 +189,8 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
-            <Footer />
         </>
     );
 };
 
 export default Dashboard;
-
-
-export function UserCard(){
-    const {data: session} = useSession();
-    const router = useRouter();
-    const executeSearch = async (query: string) => {
-        router.push(`/results?query=${encodeURIComponent(query)}`);
-    }
-    const [searchHistory, setSearchHistory] = useState<string[]>([]);
-    useEffect(() => {
-        const localHistory = localStorage.getItem('recentSearches')
-        if(localHistory){
-            setSearchHistory(JSON.parse(localHistory).slice(0, 5))
-        }
-        else {
-            const fetchHistory = async () => {
-                const history = await getSearchHistory();
-                setSearchHistory(history)
-                localStorage.setItem('recentSearches', JSON.stringify(history))
-            }
-            fetchHistory();
-        }
-    }, []);
-    return(
-       <Card>
-        {/* <CardHeader> */}
-            {/* <CardTitle>User Details</CardTitle> */}
-            {/* <CardDescription></CardDescription> */}
-        {/* </CardHeader> */}
-        <CardContent>
-            <div className='flex items-center gap-2'>
-                <div>
-                    {session?.user?.image ? <Image src={session?.user?.image} alt="User" width={50} height={50}/>
-                    : <User2 className="w-10 h-10"/>
-                    }
-                   
-                </div>
-                <div>
-                        <p className="font-medium">{session?.user?.name}</p>
-                        <p className="text-muted-foreground">{session?.user?.email}</p>
-                </div>
-            </div>
-            <div>
-                <h3 className="text-lg font-medium my-2">Your Recent Searches</h3>
-                {searchHistory.length > 0 ? (
-                    <div className="flex gap-2 flex-wrap">
-                        {searchHistory.map((search, index) => (
-                            <p key={index} onClick={() => executeSearch(search)} className="bg-muted text-foreground px-2 py-1 cursor-pointer rounded">{search}</p>
-                        ))}
-                    </div>
-                ) : (
-                    <p className="text-muted-foreground">No search history</p>
-                )}
-            </div>
-        </CardContent>
-       </Card>
-    )
-}

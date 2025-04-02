@@ -10,17 +10,11 @@ import { getPopularSearches } from '../actions';
 const Search = () => {
   const [query, setQuery] = useState('');
   const router = useRouter();
-  
-  
-  // Popular searches
   const [popularSearches, setPopularSearches] = useState<string[]>([]);
-
-  // Recent searches
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [popularFilteredSearches, setPopularFilteredSearches] = useState<string[]>([])
 
   useEffect(() => {
-    // Load recent searches from localStorage
     const saved = localStorage.getItem('recentSearches');
     if (saved) {
       try {
@@ -41,7 +35,6 @@ const Search = () => {
 
     fetchPopularSearches();
     
-    // Focus on the search input when the page loads
     const searchInput = document.getElementById('mobile-search-input');
     if (searchInput) {
       searchInput.focus();

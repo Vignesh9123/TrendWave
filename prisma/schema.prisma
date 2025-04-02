@@ -47,7 +47,7 @@ model UserSearchHistory {
 }
 
 
-model Post {
+model Post { // THis model is currently unused as community discussions are not implemented
   id    Int   @id @default(autoincrement())
   title String 
   content String 
@@ -61,7 +61,7 @@ model Post {
   updatedAt DateTime @default(now()) @updatedAt
 }
 
-model SocialMedia {
+model SocialMedia { // THis model is currently unused as community discussions are not implemented
   id    Int   @id @default(autoincrement())
   name  String
   url String
