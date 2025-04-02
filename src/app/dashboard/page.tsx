@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
 import DashboardFilters from '@/components/DashboardFilters';
@@ -8,18 +8,17 @@ import TrendCard, { TrendCardProps } from '@/components/TrendCard';
 import TrendSummary from '@/components/TrendSummary';
 import Footer from '@/components/Footer';
 // import { getMockTrendData } from '@/lib/mockData';
-import {getSentimentAnalysis, Post, trending} from '@/app/actions'
+import {getSearchHistory, getSentimentAnalysis, Post, trending} from '@/app/actions'
 import Masonry from 'react-masonry-css';
 import { getMockTrendData } from '@/lib/mockData';
 import {motion} from 'framer-motion'
-import { Loader2 } from 'lucide-react';
+import { Loader2, User2 } from 'lucide-react';
+import Image from 'next/image';
+import { useSession } from 'next-auth/react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {breakpointColumnsObj} from '@/config/clientConfig';
 const Dashboard = () => {
-    const breakpointColumnsObj = {
-        default: 3,
-        1100: 3,
-        700: 2,
-        500: 1
-      };
+    
     const [socialMedia, setSocialMedia] = useState('all');
     const [sentiment, setSentiment] = useState('all');
     const [postsLoading, setPostsLoading] = useState(true);
@@ -34,7 +33,9 @@ const Dashboard = () => {
     } | null>(null);
     const [takeAways, setTakeAways] = useState<string[]>([]);
     const [loadingStateInd, setLoadingStateInd] = useState<number>(0)
+    const {data: session} = useSession();
 
+    
     useEffect(() => {
         async function fetchTrends(){
             setPostsLoading(true);
@@ -71,6 +72,8 @@ const Dashboard = () => {
         // setTakeAways(res.takeAways)
         // setPostsLoading(false);
         // setSentimentLoading(false)
+
+        
     }, []);
 
     useEffect(() => {
@@ -119,10 +122,11 @@ const Dashboard = () => {
         <>
             <Header />
             <div className="pt-24 pb-16 min-h-screen bg-background">
-                <div className="container mx-auto px-4">
+                <div className="container mx-auto px-4 ">
                     <div className="flex justify-center mb-10">
                         <SearchBar />
                     </div>
+                    {session && <UserCard  />}
                     <div className="mb-6">
                         <h1 className="text-2xl font-bold mb-1">
                             Trending Discussions
@@ -216,3 +220,61 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+
+export function UserCard(){
+    const {data: session} = useSession();
+    const router = useRouter();
+    const executeSearch = async (query: string) => {
+        router.push(`/results?query=${encodeURIComponent(query)}`);
+    }
+    const [searchHistory, setSearchHistory] = useState<string[]>([]);
+    useEffect(() => {
+        const localHistory = localStorage.getItem('recentSearches')
+        if(localHistory){
+            setSearchHistory(JSON.parse(localHistory).slice(0, 5))
+        }
+        else {
+            const fetchHistory = async () => {
+                const history = await getSearchHistory();
+                setSearchHistory(history)
+                localStorage.setItem('recentSearches', JSON.stringify(history))
+            }
+            fetchHistory();
+        }
+    }, []);
+    return(
+       <Card>
+        {/* <CardHeader> */}
+            {/* <CardTitle>User Details</CardTitle> */}
+            {/* <CardDescription></CardDescription> */}
+        {/* </CardHeader> */}
+        <CardContent>
+            <div className='flex items-center gap-2'>
+                <div>
+                    {session?.user?.image ? <Image src={session?.user?.image} alt="User" width={50} height={50}/>
+                    : <User2 className="w-10 h-10"/>
+                    }
+                   
+                </div>
+                <div>
+                        <p className="font-medium">{session?.user?.name}</p>
+                        <p className="text-muted-foreground">{session?.user?.email}</p>
+                </div>
+            </div>
+            <div>
+                <h3 className="text-lg font-medium my-2">Your Recent Searches</h3>
+                {searchHistory.length > 0 ? (
+                    <div className="flex gap-2 flex-wrap">
+                        {searchHistory.map((search, index) => (
+                            <p key={index} onClick={() => executeSearch(search)} className="bg-muted text-foreground px-2 py-1 cursor-pointer rounded">{search}</p>
+                        ))}
+                    </div>
+                ) : (
+                    <p className="text-muted-foreground">No search history</p>
+                )}
+            </div>
+        </CardContent>
+       </Card>
+    )
+}

@@ -13,15 +13,10 @@ import Masonry from 'react-masonry-css';
 import { getMockTrendData } from '@/lib/mockData';
 import {motion} from 'framer-motion'
 import { Loader2 } from 'lucide-react';
+import {breakpointColumnsObj} from '@/config/clientConfig';
 const Results = () => {
     const searchParams = useSearchParams();
     const queryParam = searchParams.get('query') || '';
-    const breakpointColumnsObj = {
-        default: 3,
-        1100: 3,
-        700: 2,
-        500: 1
-      };
     const [socialMedia, setSocialMedia] = useState('all');
     const [sentiment, setSentiment] = useState('all');
     const [postsLoading, setPostsLoading] = useState(true);

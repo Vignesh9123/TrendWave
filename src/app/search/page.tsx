@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
-import { Search as SearchIcon, ArrowLeft } from 'lucide-react';
+import { Search as SearchIcon, ArrowLeft, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
@@ -144,7 +144,7 @@ const Search = () => {
                   onClick={() => executeSearch(term)}
                   className="flex items-center py-3 px-2 cursor-pointer hover:bg-accent rounded-md"
                 >
-                  <SearchIcon className="mr-3 h-4 w-4 text-muted-foreground" />
+                  <TrendingUp className="mr-3 h-4 w-4 text-muted-foreground" />
                   <span>{term}</span>
                 </li>
               ))}

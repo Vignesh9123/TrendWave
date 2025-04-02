@@ -64,6 +64,9 @@ export const search = async (query: string) => {
       }
     })
   }
+  
+  // The above two db calls can be made in a worker for every 10 seconds to first cache the search query and user search history in redis and then sync them to the database 
+  
   const cachedResponse = await redis.get(`search:${query.toLowerCase().trim()}`)
   if(cachedResponse){
     const timeSortedResponses = JSON.parse(cachedResponse)
@@ -177,6 +180,30 @@ export const getPopularSearches = async () => {
   await redis.setex('popularSearches',3600,JSON.stringify(popularSearches.map(searchQuery => searchQuery.query)))
   if( popularSearches && popularSearches.length > 0 ){
     return popularSearches.map(searchQuery => searchQuery.query)
+  }
+  return []
+}
+
+export const getSearchHistory = async () => {
+  const session = await auth()
+  if(!session?.user?.id){
+    return []
+  }
+  const searchHistories = await prisma.userSearchHistory.findMany({
+    where: {
+      userId: session?.user?.id
+    },
+    include:{
+      searchQuery: true
+    },
+    orderBy: {
+      createdAt: 'desc'
+    },
+    take: 5
+  })
+  console.log('searchHistories',searchHistories)
+  if( searchHistories && searchHistories.length > 0 ){
+    return searchHistories.map(searchHistory => searchHistory.searchQuery.query)
   }
   return []
 }

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Search } from 'lucide-react';
+import { Search, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
@@ -48,7 +48,6 @@ const SearchBar = () => {
     fetchPopularSearches();
     
     const down = (e: KeyboardEvent) => {
-      console.log('Key pressed')
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         if (isMobile) {
@@ -59,22 +58,27 @@ const SearchBar = () => {
       }
     };
 
-    const enter = (e:KeyboardEvent)=>{
-      if(e.key === 'Enter'){
-        e.preventDefault()
-        if(query.length > 0){
-          executeSearch(query)
-        }
-      }
-    }
+   
     
     document.addEventListener('keydown', down);
-    document.addEventListener('keydown', enter)
     return () =>{
       document.removeEventListener('keydown', down)
-      document.removeEventListener('keydown', enter)
     }
   }, [router, isMobile]);
+
+  useEffect(() => {
+    if(open){
+      const saved = localStorage.getItem('recentSearches');
+    if (saved) {
+      try {
+        setRecentSearches(JSON.parse(saved).slice(0, 5));
+      } catch (e) {
+        console.error('Failed to parse recent searches', e);
+      }
+    }
+
+    }
+  }, [open])
 
   const saveRecentSearch = (term: string) => {
     const newRecent = [term, ...recentSearches.filter(s => s !== term)].slice(0, 5);
@@ -192,7 +196,7 @@ const SearchBar = () => {
               onSelect={() => executeSearch(term)}
 
             >
-              <Search className="mr-2 h-4 w-4" />
+              <TrendingUp className="mr-2 h-4 w-4" />
               {term}
             </CommandItem>
           ))}  
