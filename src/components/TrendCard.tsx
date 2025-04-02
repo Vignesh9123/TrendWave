@@ -5,7 +5,9 @@ import { ThumbsUp, MessageSquare, Clock, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { convertHtmlTextToPlainText } from '@/lib/utils';
 export interface TrendCardProps {
+  uid: string;
   socialMedia: 'X' | 'YouTube' | 'Reddit';
   title?: string;
   content?: string;
@@ -27,7 +29,6 @@ const TrendCard = ({
   socialMedia,
   title,
   content,
-  summary,
   sentiment,
   engagement,
   createdAt,
@@ -104,13 +105,13 @@ const TrendCard = ({
             )}
           </div>
           
-          <h3 className={`text-lg font-semibold mb-2 ${socialMedia == 'X' ? 'line-clamp-5' : 'line-clamp-2'}`}>{socialMedia == 'X' ? content : title}</h3>
+          <h3 className={`text-lg font-semibold mb-2 ${socialMedia == 'X' ? 'line-clamp-5' : 'line-clamp-2'}`}>{socialMedia == 'X' ? convertHtmlTextToPlainText(content || '') : convertHtmlTextToPlainText(title || '')}</h3>
           {image && image.length > 0 && (
             <div className="mb-4">
               <Image src={image[0]} alt="Trend Image" className="w-full h-auto" width={300} height={300} />
             </div>
           )}
-          <p className="text-muted-foreground mb-4 text-sm line-clamp-3">{socialMedia == 'X' ? '' : content}</p>
+          <p className="text-muted-foreground mb-4 text-sm line-clamp-3">{socialMedia == 'X' ? '' : convertHtmlTextToPlainText(content || '')}</p>
           
           <div className="flex justify-between items-center text-xs text-slate-500">
             <div className="flex space-x-3">

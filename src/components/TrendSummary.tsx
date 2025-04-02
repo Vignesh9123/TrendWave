@@ -5,7 +5,6 @@ import { BarChart3, BarChart4, TrendingUp, ThumbsUp, MessageSquare } from 'lucid
 
 interface TrendSummaryProps {
   trends: TrendCardProps[];
-  query: string;
   sentimentAnalysis: {
     positive: number;
     negative: number;
@@ -15,7 +14,7 @@ interface TrendSummaryProps {
   postsLoading: boolean;
 }
 
-const TrendSummary = ({ trends, query, sentimentAnalysis, sentimentLoading,postsLoading }: TrendSummaryProps) => {
+const TrendSummary = ({ trends, sentimentAnalysis, sentimentLoading,postsLoading }: TrendSummaryProps) => {
   const sentimentCounts = sentimentAnalysis;
   
   const platformCounts = {

@@ -53,7 +53,7 @@ export default function ThemeProvider({
     }
 
     root.classList.add(theme);
-  }, [theme]);
+  }, [theme, storageKey]);
 
   const value = {
     theme,

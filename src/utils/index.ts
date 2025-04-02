@@ -2,6 +2,7 @@ import { youtube } from "@/config";
 import { xAxios, redditAxios } from "@/config";
 import { Post } from "@/app/actions";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const searchFromMedia = async ({query,media}: {query: string, media: 'X' | 'YouTube' | 'Reddit'}) => {
  try {
      switch (media) {
@@ -152,7 +153,6 @@ const trendsFromReddit = async () => {
     return []
   }
 }
-
 const parseX = (data: any) : Post[] => {
   const posts = data.map((item: any) => ({
     socialMedia: "X",

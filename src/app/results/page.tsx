@@ -37,7 +37,7 @@ const Results = () => {
             setPostsLoading(true);
             setSentimentLoading(true);
             const { responses } = await search(queryParam);
-            const formattedTrends = responses.map((response: Post, ind: number) => ({
+            const formattedTrends = responses.map((response: Post) => ({
                 ...response,
                 engagement: {
                     likes: response.upvotes || 0,
@@ -49,9 +49,9 @@ const Results = () => {
             setPostsLoading(false);
             const sentiment = await getSentimentAnalysis(responses, queryParam);
             setSentimentAnalysis(sentiment?.overall);
-            const updatedTrends = formattedTrends.map((trend : any) => ({
+            const updatedTrends = formattedTrends.map((trend : TrendCardProps) => ({
                 ...trend,
-                sentiment: sentiment?.posts.find((s : any) => s.id === trend.uid)?.sentiment || 'neutral'
+                sentiment: sentiment?.posts.find((s : {id: string, sentiment: 'positive' | 'neutral' | 'negative'}) => s.id === trend.uid)?.sentiment || 'neutral'
             }));
             setTrends(updatedTrends);
             setFilteredTrends(updatedTrends);
@@ -129,7 +129,7 @@ const Results = () => {
                         :`Showing ${filteredTrends.length} trends from across the web`}
                         </div>
                     </div>
-                    <TrendSummary trends={trends} query={query} sentimentAnalysis={sentimentAnalysis} sentimentLoading={sentimentLoading} postsLoading={postsLoading}/>
+                    <TrendSummary trends={trends} sentimentAnalysis={sentimentAnalysis} sentimentLoading={sentimentLoading} postsLoading={postsLoading}/>
                     <div className="mt-6">
                         {sentimentLoading ? (
                             <div className="flex flex-col gap-2 my-3">

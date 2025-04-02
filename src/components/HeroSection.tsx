@@ -15,7 +15,7 @@ const HeroSection = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-brand-dark dark:from-[gray] dark:via-brand-purple dark:to-brand-blue via-brand-purple to-brand-blue bg-clip-text text-transparent">
-            Discover What's Trending Across The Web
+            Discover What&apos;s Trending Across The Web
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300 mb-8 max-w-3xl mx-auto">
             Get real-time insights into trending discussions from YouTube, Reddit, and Twitter. 

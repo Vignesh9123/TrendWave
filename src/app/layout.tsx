@@ -4,6 +4,7 @@ import "./globals.css";
 import ThemeProvider from "@/components/Theme-Provider";
 import { SessionProvider } from "next-auth/react";
 import Header from "@/components/Header";
+import { Suspense } from "react";
 import Footer from "@/components/Footer";
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,7 +34,12 @@ export default function RootLayout({
         <ThemeProvider defaultTheme="dark" storageKey="theme">
           <SessionProvider>
             <Header />
-            {children}
+            <Suspense fallback={<div className="text-center py-12 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-foreground"></div>
+              <span className="ml-2">Loading...</span>
+            </div>}>
+              {children}
+            </Suspense>
             <Footer />
           </SessionProvider>
         </ThemeProvider>

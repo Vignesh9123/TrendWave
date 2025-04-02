@@ -1,10 +1,8 @@
 'use client'
 import React from 'react';
-import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
 import FeaturesSection from '@/components/FeaturesSection';
 import PlatformsSection from '@/components/PlatformsSection';
-import Footer from '@/components/Footer';
 import Link from 'next/link';
 
 const Index = () => {
@@ -34,7 +32,6 @@ const Index = () => {
           </div>
         </section>
       </main>
-      <Footer />
     </div>
   );
 };

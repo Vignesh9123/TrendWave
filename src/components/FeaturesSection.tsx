@@ -31,7 +31,7 @@ const FeaturesSection = () => {
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">Powerful features for trend discovery</h2>
           <p className="text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-            Our platform aggregates trend data from multiple sources to give you the most comprehensive view of what's happening online.
+            Our platform aggregates trend data from multiple sources to give you the most comprehensive view of what&apos;s happening online.
           </p>
         </div>
         

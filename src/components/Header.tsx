@@ -39,7 +39,11 @@ const Header = () => {
           <div className="flex items-center space-x-2 md:space-x-4">
             <ThemeToggle />
             {session ? (
-              <Button onClick={() => signOut()} variant="ghost">Log out</Button>
+              <Button onClick={() =>{
+                localStorage.removeItem('recentSearches');
+                signOut();
+                
+              }} variant="ghost">Log out</Button>
             ) : (
               <>
                 <Button onClick={() => router.push('/signin')} variant="ghost">Log in</Button>

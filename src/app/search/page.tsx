@@ -48,7 +48,7 @@ const Search = () => {
       })
     }
     else setPopularFilteredSearches(popularSearches)
-  }, [query])
+  }, [query, popularSearches])
 
   const saveRecentSearch = (term: string) => {
     const newRecent = [term, ...recentSearches.filter(s => s !== term)].slice(0, 5);
