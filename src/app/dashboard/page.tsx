@@ -44,7 +44,6 @@ const Dashboard = () => {
                     comments: response.comments || 0
                 },
             }));
-            console.log('formattedTrends',formattedTrends)
             setTrends(formattedTrends);
             setFilteredTrends(formattedTrends);
             setPostsLoading(false);
