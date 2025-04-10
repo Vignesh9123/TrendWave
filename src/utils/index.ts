@@ -87,9 +87,9 @@ const searchFromYoutube = async (query: string) => {
         q:query!,
         publishedAfter: new Date('2025-03-23T16:46:34+00:00').toISOString()        
     }, {params: {type:'video'}});
-    const videoIds = response.data.items?.map((item)=>{
+    const videoIds = response.data.items?.map((item:any)=>{
       return item.id?.videoId
-    }).filter((i)=> i !== undefined)
+    }).filter((i:any)=> i !== undefined)
     if(videoIds && videoIds.length > 0){
     const detailedResponse = await youtube.videos.list({
       part:["snippet", "contentDetails", "statistics"],
@@ -148,8 +148,8 @@ const trendsFromReddit = async () => {
     const response = await redditAxios.get(`/top?limit=5`)
     // console.log('Reddit:response.data',response.data)
     return response.data.data.children
-  } catch (error) {
-    console.log(error)
+  } catch (error:any) {
+    console.log(error.response)
     return []
   }
 }
