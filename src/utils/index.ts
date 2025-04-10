@@ -149,7 +149,9 @@ const trendsFromReddit = async () => {
     // console.log('Reddit:response.data',response.data)
     return response.data.data.children
   } catch (error:any) {
+    console.log("Error from reddit")
     console.log(error.response)
+    console.log("Error from reddit close")
     return []
   }
 }
