@@ -75,7 +75,7 @@ const Search = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="p-4 border-b border-border sticky top-0 bg-background z-10">
+      <div className="p-4 border-b border-border sticky top-0 bg-background z-40">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={goBack} className="shrink-0">
             <ArrowLeft className="h-5 w-5" />
