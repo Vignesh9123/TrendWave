@@ -131,7 +131,7 @@ export const getSentimentAnalysis = async (posts: Post[], query: string) => {
   if(cachedResponse){
     return JSON.parse(cachedResponse)
   }
-  const model = google('gemini-2.0-flash-001')
+  const model = google('gemini-2.5-flash')
   const {object} = await generateObject({
     model,
     system: systemPrompt,
