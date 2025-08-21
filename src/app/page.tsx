@@ -24,8 +24,8 @@ const Index = () => {
                 <Link href="/dashboard" className="px-6 py-3 bg-white text-brand-purple font-medium rounded-lg hover:bg-opacity-90 transition-colors">
                   Try it now
                 </Link>
-                <Link href="/pricing" className="px-6 py-3 bg-transparent border border-white text-white font-medium rounded-lg hover:bg-white hover:bg-opacity-10 transition-colors">
-                  View pricing
+                <Link href="https://dub.sh/vignesh-portfolio" className="px-6 py-3 bg-transparent border border-white text-white font-medium rounded-lg hover:bg-white hover:bg-opacity-10 transition-colors">
+                  Built by Vignesh
                 </Link>
               </div>
             </div>
